@@ -1939,6 +1939,8 @@
         <button id="battleResultBtn" onclick="closeBattleResult()">続ける</button>
         <br>
         <button id="battleResultRestartBtn" onclick="restartTowerFromBeginning()">🔄 最初からやり直す（1層〜）</button>
+        <br>
+        <button id="battleResultBackBtn" onclick="closeBattleResult()" style="display:none; margin-top:8px; background:linear-gradient(135deg,#333,#555); color:#fff; border:none; padding:12px 30px; border-radius:25px; font-size:16px; cursor:pointer; font-weight:bold;">✦ 戻る ✦</button>
     </div>
 </div>
 
@@ -5230,6 +5232,16 @@
             // 敗北時に「最初から」ボタンを表示
             const restartBtn = document.getElementById('battleResultRestartBtn');
             restartBtn.style.display = (showRestartBtn && !isVictory) ? 'inline-block' : 'none';
+            // 星の化身戦では通常ボタンを非表示、戻るボタンのみ表示
+            const backBtn = document.getElementById('battleResultBackBtn');
+            if (incarnationBattleMode) {
+                btn.style.display = 'none';
+                restartBtn.style.display = 'none';
+                backBtn.style.display = 'inline-block';
+            } else {
+                btn.style.display = 'inline-block';
+                backBtn.style.display = 'none';
+            }
             // ダメージサマリー表示
             const dmgDiv = document.getElementById('battleResultDamageList');
             if (dmgDiv) {
@@ -5895,6 +5907,17 @@
 
                     // 自己回復行動
                     if (chosenAttack.selfRegen) {
+                        // 土の化身テラス戦：HP半分以下になったら回復しない
+                        if (incarnationBattleMode && incarnationDayIdx === 6 && bossHp <= bossMaxHp * 0.5) {
+                            log(`<span style="color:#aa7733; font-style:italic;">⛰️ テラスは傷ついており、岩の力を回復に使えなかった…！</span>`);
+                            bossAtk = Math.floor(bossAtk * 1.05);
+                            if (incarnationBattleMode) {
+                                const _incDay2 = INCARNATION_DAYS.find(d => d.dayIndex === incarnationDayIdx);
+                                log(`<span style="color:#00ffaa; font-size:12px;">${_incDay2 ? _incDay2.icon : '🌟'}化身の力が高まる…！（ATK: ${bossAtk.toLocaleString()}）</span>`);
+                            }
+                            turn++;
+                            continue;
+                        }
                         let regenAmt = Math.floor(bossMaxHp * chosenAttack.selfRegen);
                         bossHp = Math.min(bossMaxHp, bossHp + regenAmt);
                         log(`<span style="color:#f0a;">[自然の力] 敵が ${regenAmt.toLocaleString()} HP回復した！</span>`);
@@ -5982,7 +6005,8 @@
                     if(u) {
                         // シールド解除
                         u._shield = 0; u._shieldCount = 0;
-                        if(!userData.bannedUnits.includes(u.name)) userData.bannedUnits.push(u.name);
+                        // 星の化身戦では bannedUnits に追加しない
+                        if(!incarnationBattleMode && !userData.bannedUnits.includes(u.name)) userData.bannedUnits.push(u.name);
                         party[idx] = null;
                     }
                 });
