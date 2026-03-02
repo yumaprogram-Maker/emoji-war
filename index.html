@@ -272,13 +272,36 @@
     .count-badge { position: absolute; top: -5px; right: -5px; background: #333; color: #00ffcc; font-size: 9px; padding: 1px 4px; border-radius: 4px; border: 1px solid #00ffcc; font-weight: bold; }
     
     #flash { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 6000; opacity: 0; }
-    @keyframes f-ur { 0% { opacity: 1; background: #fff; } 10% { background: #ff0000; } 15% { background: #fff; } 20% { background: #000; } 100% { opacity: 0; } }
+    @keyframes f-ur {
+        0%   { opacity: 1; background: #fff; }
+        5%   { background: #ff0000; }
+        8%   { background: #fff; }
+        12%  { background: #ff0000; box-shadow: inset 0 0 120px #ff4400; }
+        16%  { background: #fff; }
+        20%  { background: #000; }
+        25%  { background: radial-gradient(circle at center, #ff2200 0%, #000 60%); opacity: 0.95; }
+        35%  { background: radial-gradient(circle at center, #ff6600 0%, #200000 60%); opacity: 0.85; }
+        50%  { background: radial-gradient(circle at center, #ff0000 0%, #000 80%); opacity: 0.6; }
+        80%  { opacity: 0.3; background: #000; }
+        100% { opacity: 0; }
+    }
     @keyframes badge-pulse { from { opacity: 0.85; } to { opacity: 1; filter: brightness(1.3); } }
     @keyframes f-lr { 0% { opacity: 1; background: #fff; } 10% { background: #ff00ff; } 15% { background: #fff; } 100% { opacity: 0; } }
     @keyframes f-fever { 0% { opacity: 1; background: #ffd700; } 50% { background: #fff; } 100% { opacity: 0; } }
-    .flash-ur { animation: f-ur 2.5s forwards; }
+    .flash-ur { animation: f-ur 4s forwards; }
     .flash-lr { animation: f-lr 2s forwards; }
     .flash-fever { animation: f-fever 1.5s forwards; }
+
+    /* UR専用 演出オーバーレイ */
+    #urOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 5999; display: none; overflow: hidden; }
+    #urOverlay .ur-ray { position: absolute; top: 50%; left: 50%; width: 200%; height: 6px; transform-origin: 0 50%; opacity: 0; background: linear-gradient(90deg, transparent, #ff4400, #ffaa00, transparent); border-radius: 3px; }
+    @keyframes ur-ray-spin { 0% { opacity: 0; transform: rotate(var(--deg)) scaleX(0); } 15% { opacity: 0.9; transform: rotate(var(--deg)) scaleX(1); } 60% { opacity: 0.5; } 100% { opacity: 0; transform: rotate(calc(var(--deg) + 360deg)) scaleX(0.5); } }
+    @keyframes ur-crown { 0% { opacity: 0; transform: translate(-50%,-60%) scale(0.2) rotate(-20deg); } 30% { opacity: 1; transform: translate(-50%,-60%) scale(1.4) rotate(5deg); } 50% { transform: translate(-50%,-60%) scale(1.1) rotate(0deg); } 80% { opacity: 0.8; } 100% { opacity: 0; transform: translate(-50%,-60%) scale(1.5); } }
+    #urCrownText { position: fixed; top: 40%; left: 50%; font-size: 64px; pointer-events: none; z-index: 6100; display: none; filter: drop-shadow(0 0 20px #ff4400) drop-shadow(0 0 40px #ff0000); animation: ur-crown 3.5s forwards; }
+    @keyframes ur-label-in { 0% { opacity: 0; transform: translate(-50%,-50%) scale(0.3) rotateY(90deg); } 40% { opacity: 1; transform: translate(-50%,-50%) scale(1.15) rotateY(0deg); } 60% { transform: translate(-50%,-50%) scale(1); } 85% { opacity: 1; } 100% { opacity: 0; transform: translate(-50%,-50%) scale(1.3); } }
+    #urLabel { position: fixed; top: 55%; left: 50%; font-size: 42px; font-weight: 900; letter-spacing: 8px; color: #fff; text-shadow: 0 0 20px #ff0000, 0 0 40px #ff4400, 0 0 60px #ff2200; pointer-events: none; z-index: 6100; display: none; animation: ur-label-in 3.5s forwards; }
+    @keyframes ur-shockwave { 0% { opacity: 0.9; transform: translate(-50%,-50%) scale(0); } 100% { opacity: 0; transform: translate(-50%,-50%) scale(5); } }
+    .ur-shockwave-ring { position: fixed; top: 50%; left: 50%; width: 200px; height: 200px; border-radius: 50%; border: 4px solid #ff4400; pointer-events: none; z-index: 6050; display: none; animation: ur-shockwave 1s ease-out forwards; }
 
     .btn { width: 100%; padding: 15px; border: none; border-radius: 12px; font-weight: bold; font-size: 16px; cursor: pointer; color: white; background: linear-gradient(#e67e22, #d35400); box-shadow: 0 4px 0 #8e44ad; transition: 0.2s; margin-top: 10px; text-align: center; text-decoration: none; box-sizing: border-box; display: block;}
     .btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #8e44ad; }
@@ -1552,6 +1575,12 @@
 </div>
 
 <div id="flash"></div>
+<div id="urOverlay"></div>
+<div id="urCrownText">🔥</div>
+<div id="urLabel">◆ U R ◆</div>
+<div class="ur-shockwave-ring" id="urShockwave1"></div>
+<div class="ur-shockwave-ring" id="urShockwave2" style="animation-delay:0.3s;border-color:#ffaa00;"></div>
+<div class="ur-shockwave-ring" id="urShockwave3" style="animation-delay:0.6s;border-color:#ff6600;"></div>
 
 <!-- ========== 開発者モードUI ========== -->
 <div id="devBadge">⚙ DEVELOPER MODE ⚙</div>
@@ -1586,6 +1615,7 @@
                     <option value="kakusei_ur">🔴 URピックアップ確定（覚醒演出）</option>
                     <option value="lr_flash">✨ LR演出（フラッシュのみ）</option>
                     <option value="ur_flash">🔥 UR演出（フラッシュのみ）</option>
+                    <option value="ur_special">💥 UR演出（特別強化版）</option>
                     <option value="upgrade">⬆️ 全部開いてからレアキャラが高レアに変化</option>
                     <option value="fever">🎉 フィーバーモード</option>
                     <option value="hasha">👑 絶対覇者召喚（5体選択）</option>
@@ -1968,7 +1998,7 @@
     // ========== ガチャタイプ管理 ==========
     let currentGachaType = 'standard'; // 'standard' | 'lr' | 'ur'
     // 開発者モード：次のガチャで強制発動する演出
-    let devForcedEffect = ''; // 'kakusei_lr' | 'kakusei_ur' | 'lr_flash' | 'ur_flash' | 'upgrade' | 'fever' | ''
+    let devForcedEffect = ''; // 'kakusei_lr' | 'kakusei_ur' | 'lr_flash' | 'ur_flash' | 'ur_special' | 'upgrade' | 'fever' | ''
 
     // ========== キャラ強み一言キャッチコピー ==========
     const catchCopyMap = {
@@ -2003,8 +2033,11 @@
         "聖域の乙女アルテミス":   "月光の聖壁が降り注ぐ！シールドで味方を守り抜く月の守護者",
         // スキル発動率UP新キャラ
         "天命の布告者アナンケ":   "天命が戦場を支配する！全員のスキル発動率1.5倍の絶対的指揮官",
+        "呪刻の毒神ヴェノム":     "敵の回復を完全に封じる！100%回復阻害で敵の再生を無に帰す毒神",
         "閃光の軍神アレス":       "閃光のごとく奥義が舞う！スキル発動率1.3倍で戦場を制圧",
+        "毒牙の蛇神セルペンス":   "猛毒の蛇神が敵の回復を70%封じる！攻撃と阻害を兼ね備えたLRの刺客",
         "星詠みの予言者ミラ":     "星が奥義の発動を告げる！スキル率1.2倍で確かな勝利へ",
+        "禁断の魔薬師グリモア":   "禁じられた薬で敵の回復を40%阻害するSSRの異端者。回復メタとして編成価値大！",
     };
 
     // ========== 覚醒確定演出 ==========
@@ -2507,9 +2540,10 @@
             {name:"万物の父オーディン", icon:"👁‍🗨", hp:54000, atk:4900, skill:"グングニルの一投", baseVal: 1100, sDesc:"必中の神槍。敵に攻撃力の{n}%ダメージを与える。味方が倒れるたびに回復,ATK30%上昇"},
             {name:"無限の可能性メビウス", icon:"∞", hp:8888, atk:666, skill:"アンリミテット", baseVal: 888, sDesc:"敵に攻撃力の{n}%の連撃（最大8連）。このキャラのLBは通常より強くなる"},
             {name:"運命の女神フォルトゥナ", icon:"🍀", hp:46000, atk:4600, skill:"運命の輪廻", baseVal: 900, sDesc:"運命の導き。行動がランダムで決まり、うまくはまれば強力な効果が発動する"},
-            {name:"奈落の支配者ヘカトンケイル", icon:"🕷️", hp:52000, atk:4000, skill:"千の腕の呪縛", baseVal: 700, sDesc:"奈落の縛鎖。敵に攻撃力の{n}%ダメージ。[常時・全体]敵のATKを常時50%ダウン"},
+            {name:"奈落の支配者ヘカトンケイル", icon:"🕷️", hp:42000, atk:4000, skill:"千の腕の呪縛", baseVal: 700, sDesc:"奈落の縛鎖。敵に攻撃力の{n}%ダメージ。[常時・全体]敵のATKを常時50%ダウン"},
             {name:"天壁の守護神エギル", icon:"🛡️", hp:65000, atk:300, skill:"聖盾の号令", baseVal: 18000, sDesc:"敵に少量ダメージを与え、味方全体に{n}の聖盾シールドを付与する。LBで盾の値が上昇", shieldVal: 20000},
-            {name:"天命の布告者アナンケ", icon:"🔮", hp:52000, atk:4600, skill:"天命の宣告", baseVal: 500, sDesc:"敵に攻撃力の{n}%ダメージ。[常時]味方全体のスキル発動率1.5倍。", skillRateBoost: 1.5}
+            {name:"天命の布告者アナンケ", icon:"🔮", hp:52000, atk:4600, skill:"天命の宣告", baseVal: 500, sDesc:"敵に攻撃力の{n}%ダメージ。[常時]味方全体のスキル発動率1.5倍。", skillRateBoost: 1.5},
+            {name:"呪刻の毒神ヴェノム", icon:"🦂", hp:46000, atk:3500, skill:"デスポイズン・カース", baseVal: 600, sDesc:"敵に攻撃力の{n}%ダメージ。[回復阻害]敵の回復効果を100%無効化する。", healBlock: 1.0}
         ]},
         { rarity: "LR", color: "#ff00ff", prob: 0.5, canLimitBreak: true, items: [
             {name:"創造神ゼウス", icon:"👁️", hp:19999, atk:888, skill:"神罰の雷槍", baseVal: 500, sDesc:"全知全能の雷。敵に攻撃力の{n}%ダメージを与える。"},
@@ -2525,6 +2559,7 @@
             {name:"幽冥の審判者ノルン", icon:"💠", hp:20000, atk:1100, skill:"運命の裁断", baseVal: 520, sDesc:"三運命の裁き。敵に攻撃力の{n}%ダメージ。[常時・全体]敵のATKを常時30%ダウン"},
             {name:"聖域の乙女アルテミス", icon:"🌸", hp:28000, atk:200, skill:"月光の聖壁", baseVal: 10000, sDesc:"敵に少量ダメージを与え、味方全体に{n}の月光シールドを付与する。LBで盾の値が上昇", shieldVal: 12000},
             {name:"閃光の軍神アレス", icon:"⚡", hp:24000, atk:1050, skill:"閃光戦陣", baseVal: 220, sDesc:"敵に攻撃力の{n}%ダメージ。[常時]味方全体のスキル発動率1.3倍。", skillRateBoost: 1.3},
+            {name:"毒牙の蛇神セルペンス", icon:"🐊", hp:18000, atk:900, skill:"ベノム・インフェクション", baseVal: 550, sDesc:"敵に攻撃力の{n}%ダメージ。[回復阻害]敵の回復効果を70%カットする。", healBlock: 0.7},
             // ===== 星の化身 初クリア専用LR（ガチャ非排出・LR枠内ユニーク性能） =====
             // ルナリア：高HP・中ATK、毎ターン全体回復パッシブ（サポート型LR）
             {name:"月の化身ルナリア", icon:"🌕", hp:22000, atk:1050, skill:"月蝕霊閃・真", baseVal: 520,
@@ -2567,7 +2602,8 @@
             {name:"月読の暗殺者", icon:"🌙", hp:100, atk:4000, skill:"月の影", baseVal: 700, sDesc:"影からの急襲。敵に攻撃力の{n}%ダメージを与える。"},
             {name:"麒麟", icon:"🦒", hp:6500, atk:400, skill:"天界の風", baseVal: 120, sDesc:"天界の息吹。最もHPが減っている味方を攻撃力の{n}%回復する。"},
             {name:"封印の巫女イズナ", icon:"🏮", hp:6200, atk:480, skill:"呪縛の御幣", baseVal: 160, sDesc:"古の封印術。敵に攻撃力の{n}%ダメージ。[常時・全体]敵のATKを常時15%ダウン"},
-            {name:"星詠みの予言者ミラ", icon:"🌠", hp:5800, atk:320, skill:"星詠みの奇跡", baseVal: 200, sDesc:"敵に攻撃力の{n}%ダメージ。[常時]味方全体のスキル発動率1.2倍。", skillRateBoost: 1.2}
+            {name:"星詠みの予言者ミラ", icon:"🌠", hp:5800, atk:320, skill:"星詠みの奇跡", baseVal: 200, sDesc:"敵に攻撃力の{n}%ダメージ。[常時]味方全体のスキル発動率1.2倍。", skillRateBoost: 1.2},
+            {name:"禁断の魔薬師グリモア", icon:"⚗️", hp:4800, atk:480, skill:"アンチリジェネ・ポーション", baseVal: 160, sDesc:"敵に攻撃力の{n}%ダメージ。[回復阻害]敵の回復効果を40%カットする。", healBlock: 0.4}
         ]},
         { rarity: "SR", color: "#00ffff", prob: 15, canLimitBreak: true, items: [
             {name:"忍者", icon:"🥷", hp:1800, atk:480, skill:"影縫い", baseVal: 80, sDesc:"影を縫い、敵に攻撃力の{n}%ダメージを与える。"},
@@ -2682,6 +2718,14 @@
         { id:"max_mira",       icon:"🌠", name:"星詠みの覚者",        cond:"星詠みの予言者ミラを10凸にする",         check: u => (u.myBox["星詠みの予言者ミラ"]||0) >= 10 },
         { id:"skill_trio",     icon:"✨", name:"三重奏の奇跡",        cond:"アナンケ・アレス・ミラを全員入手する",    check: u => u.myBox["天命の布告者アナンケ"]!==undefined && u.myBox["閃光の軍神アレス"]!==undefined && u.myBox["星詠みの予言者ミラ"]!==undefined },
         { id:"skill_max_trio", icon:"🌈", name:"奥義の支配者",        cond:"アナンケ・アレス・ミラを全員10凸にする", check: u => (u.myBox["天命の布告者アナンケ"]||0)>=10 && (u.myBox["閃光の軍神アレス"]||0)>=10 && (u.myBox["星詠みの予言者ミラ"]||0)>=10 },
+        // ▼ 回復阻害キャラ称号
+        { id:"got_venom",      icon:"🦂", name:"毒神の使徒",           cond:"呪刻の毒神ヴェノムを入手する",           check: u => u.myBox["呪刻の毒神ヴェノム"] !== undefined },
+        { id:"max_venom",      icon:"🦂", name:"完全回復阻害の体現者", cond:"呪刻の毒神ヴェノムを10凸にする",         check: u => (u.myBox["呪刻の毒神ヴェノム"]||0) >= 10 },
+        { id:"got_serpens",    icon:"🐊", name:"毒牙の継承者",         cond:"毒牙の蛇神セルペンスを入手する",         check: u => u.myBox["毒牙の蛇神セルペンス"] !== undefined },
+        { id:"max_serpens",    icon:"🐊", name:"蛇神の信徒",           cond:"毒牙の蛇神セルペンスを10凸にする",       check: u => (u.myBox["毒牙の蛇神セルペンス"]||0) >= 10 },
+        { id:"got_grimoire",   icon:"⚗️", name:"禁断の知識",           cond:"禁断の魔薬師グリモアを入手する",         check: u => u.myBox["禁断の魔薬師グリモア"] !== undefined },
+        { id:"max_grimoire",   icon:"⚗️", name:"禁術の達人",           cond:"禁断の魔薬師グリモアを10凸にする",       check: u => (u.myBox["禁断の魔薬師グリモア"]||0) >= 10 },
+        { id:"healblock_trio", icon:"☠️", name:"回復封殺の三賢者",     cond:"ヴェノム・セルペンス・グリモアを全員入手する", check: u => u.myBox["呪刻の毒神ヴェノム"]!==undefined && u.myBox["毒牙の蛇神セルペンス"]!==undefined && u.myBox["禁断の魔薬師グリモア"]!==undefined },
         // ▼ ガチャ回数上位称号（1000超）
         { id:"draws_3000",     icon:"🌠", name:"召喚狂の王",          cond:"召喚を合計3000回行う",                  check: u => (u.totalDraws||0) >= 3000 },
         { id:"draws_5000",     icon:"🎆", name:"伝説の召喚師",        cond:"召喚を合計5000回行う",                  check: u => (u.totalDraws||0) >= 5000 },
@@ -4080,6 +4124,68 @@
         }
     }
 
+    function triggerURSpecialEffect() {
+        // 放射状光線
+        const overlay = document.getElementById('urOverlay');
+        overlay.innerHTML = '';
+        overlay.style.display = 'block';
+        const rayCount = 12;
+        for (let i = 0; i < rayCount; i++) {
+            const ray = document.createElement('div');
+            ray.className = 'ur-ray';
+            const deg = (360 / rayCount) * i;
+            ray.style.setProperty('--deg', deg + 'deg');
+            ray.style.animation = `ur-ray-spin 3s ease-out forwards`;
+            ray.style.animationDelay = (i * 0.04) + 's';
+            overlay.appendChild(ray);
+        }
+        setTimeout(() => { overlay.style.display = 'none'; overlay.innerHTML = ''; }, 3200);
+
+        // クラウン絵文字
+        const crown = document.getElementById('urCrownText');
+        crown.style.display = 'block';
+        crown.style.animation = 'none';
+        void crown.offsetWidth;
+        crown.style.animation = 'ur-crown 3.5s forwards';
+        setTimeout(() => { crown.style.display = 'none'; }, 3500);
+
+        // URラベル
+        const label = document.getElementById('urLabel');
+        label.style.display = 'block';
+        label.style.animation = 'none';
+        void label.offsetWidth;
+        label.style.animation = 'ur-label-in 3.5s forwards';
+        setTimeout(() => { label.style.display = 'none'; }, 3500);
+
+        // 衝撃波リング
+        ['urShockwave1','urShockwave2','urShockwave3'].forEach((id, i) => {
+            const ring = document.getElementById(id);
+            ring.style.display = 'block';
+            ring.style.animation = 'none';
+            void ring.offsetWidth;
+            ring.style.animation = `ur-shockwave 1s ease-out forwards`;
+            ring.style.animationDelay = (i * 0.3) + 's';
+            setTimeout(() => { ring.style.display = 'none'; }, 1000 + i * 300 + 200);
+        });
+
+        // URサウンド強化（追加音）
+        if (audioCtx) {
+            try {
+                setTimeout(() => {
+                    const osc2 = audioCtx.createOscillator();
+                    const g2 = audioCtx.createGain();
+                    osc2.connect(g2); g2.connect(audioCtx.destination);
+                    osc2.type = 'sawtooth';
+                    osc2.frequency.setValueAtTime(80, audioCtx.currentTime);
+                    osc2.frequency.exponentialRampToValueAtTime(300, audioCtx.currentTime + 0.5);
+                    g2.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                    g2.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 1.5);
+                    osc2.start(); osc2.stop(audioCtx.currentTime + 1.5);
+                }, 200);
+            } catch(e) {}
+        }
+    }
+
     function playSE(type) {
         if(!audioCtx) return;
         const osc = audioCtx.createOscillator();
@@ -4158,9 +4264,9 @@
         }
 
         // 強制UR/LR（flash系）の場合は最初のカードを差し替え
-        if (forcedEffect === 'ur_flash' || forcedEffect === 'lr_flash') {
-            const fRarity = forcedEffect === 'ur_flash' ? 'UR' : 'LR';
-            const fInfo = getDevForcedChar(forcedEffect);
+        if (forcedEffect === 'ur_flash' || forcedEffect === 'lr_flash' || forcedEffect === 'ur_special') {
+            const fRarity = (forcedEffect === 'ur_flash' || forcedEffect === 'ur_special') ? 'UR' : 'LR';
+            const fInfo = getDevForcedChar(forcedEffect === 'ur_special' ? 'ur_flash' : forcedEffect);
             if (fInfo) {
                 results[0] = { item: fInfo.item, rarityInfo: fInfo.group, isPickup: false };
                 if (fRarity === 'UR') hasUR = true;
@@ -4291,8 +4397,13 @@
                 playSE(rarity.toLowerCase());
                 const flash = document.getElementById("flash");
                 flash.className = rarity === "UR" ? "flash-ur" : "flash-lr";
-                setTimeout(() => flash.className = "", 2500);
-                await new Promise(r => setTimeout(r, 1200)); 
+                setTimeout(() => flash.className = "", rarity === "UR" ? 4000 : 2500);
+                if (rarity === "UR") {
+                    triggerURSpecialEffect();
+                    await new Promise(r => setTimeout(r, 2400));
+                } else {
+                    await new Promise(r => setTimeout(r, 1200));
+                }
             } else {
                 playSE('r');
                 await new Promise(r => setTimeout(r, 400));
@@ -4753,7 +4864,7 @@
           ],
           skill: { name: "ラグナロクの炎", msg: "🔥 スルトが世界を燃やす炎を解き放つ！全体に壊滅的火炎！", effect: "aoe", mult: 2.5 }
         },
-        { name: "深淵の龍：ヨルムンガンド", icon: "🐍",
+        { name: "深淵の龍：ヨルムンガンド", icon: "🐊",
           attacks: [
             { msg: "世界蛇が締め付ける！全体拘束攻撃！", mult: 1.0, allTarget: true },
             { msg: "毒の牙で噛みちぎる！（ランダム単体）", mult: 1.5, targetRandom: true },
@@ -4926,6 +5037,9 @@
         if (unitName === "天命の布告者アナンケ") return `[効果] 敵に${baseVal}%ダメ。[常時]味方全体のスキル発動率1.5倍`;
         if (unitName === "閃光の軍神アレス")    return `[効果] 敵に${baseVal}%ダメ。[常時]味方全体のスキル発動率1.3倍`;
         if (unitName === "星詠みの予言者ミラ")  return `[効果] 敵に${baseVal}%ダメ。[常時]味方全体のスキル発動率1.2倍`;
+        if (unitName === "呪刻の毒神ヴェノム")  return `[効果] 敵に${baseVal}%ダメ。[回復阻害]敵の回復を100%完全無効化`;
+        if (unitName === "毒牙の蛇神セルペンス") return `[効果] 敵に${baseVal}%ダメ。[回復阻害]敵の回復を70%カット`;
+        if (unitName === "禁断の魔薬師グリモア") return `[効果] 敵に${baseVal}%ダメ。[回復阻害]敵の回復を40%カット`;
         // ===== 星の化身LRキャラ =====
         if (unitName === "月の化身ルナリア") return `[効果] 敵に${baseVal}%ダメ。スキル時に全体HP10%追加回復。[常時]毎ターン味方全体HP3%回復`;
         if (unitName === "火の化身イグニス")  return `[効果] 敵に${baseVal}%ダメ＋全体追加10%ダメ。[常時]毎ターン自ATK4%上昇`;
@@ -5425,6 +5539,10 @@
             if (party.some(u => u && u.name === "閃光の軍神アレス" && u.currentHp > 0))    { globalSkillRate *= 1.3; log('<span style="color:#88aaff;">⚡[閃光戦陣] アレスのパッシブでスキル発動率1.3倍！</span>'); }
             if (party.some(u => u && u.name === "星詠みの予言者ミラ" && u.currentHp > 0))  { globalSkillRate *= 1.2; log('<span style="color:#ffffaa;">🌠[星詠みの奇跡] ミラのパッシブでスキル発動率1.2倍！</span>'); }
             globalSkillRate = Math.min(1.0, globalSkillRate);
+            // 回復阻害パッシブ通知
+            if (party.some(u => u && u.name === "呪刻の毒神ヴェノム" && u.currentHp > 0))   { log('<span style="color:#88ff44;">🦂[回復阻害・ヴェノム] 敵の回復効果が100%無効化されている！</span>'); }
+            else if (party.some(u => u && u.name === "毒牙の蛇神セルペンス" && u.currentHp > 0)) { log('<span style="color:#88ff44;">🐊[回復阻害・セルペンス] 敵の回復効果が70%カットされている！</span>'); }
+            else if (party.some(u => u && u.name === "禁断の魔薬師グリモア" && u.currentHp > 0)) { log('<span style="color:#88ff44;">⚗️[回復阻害・グリモア] 敵の回復効果が40%カットされている！</span>'); }
 
             for (let i = 0; i < party.length; i++) {
                 const unit = party[i];
@@ -5799,6 +5917,30 @@
                     return gr;
                 }
                 // ヘルパー：1体にダメージ
+                // ヘルパー：回復阻害レート計算（敵の回復に適用）
+                function calcHealBlockRate() {
+                    let block = 0;
+                    if (party.some(u => u && u.name === "呪刻の毒神ヴェノム" && u.currentHp > 0)) block = Math.max(block, 1.0);
+                    if (party.some(u => u && u.name === "毒牙の蛇神セルペンス" && u.currentHp > 0)) block = Math.max(block, 0.7);
+                    if (party.some(u => u && u.name === "禁断の魔薬師グリモア" && u.currentHp > 0)) block = Math.max(block, 0.4);
+                    return block; // 0〜1.0 (この割合だけ回復量を削減)
+                }
+                function applyHealBlock(rawHeal, source) {
+                    const block = calcHealBlockRate();
+                    if (block <= 0) return rawHeal;
+                    const reduced = Math.floor(rawHeal * (1 - block));
+                    const cut = rawHeal - reduced;
+                    let blocker = '';
+                    if (block >= 1.0) blocker = 'ヴェノム';
+                    else if (block >= 0.7) blocker = 'セルペンス';
+                    else blocker = 'グリモア';
+                    if (block >= 1.0) {
+                        log(`<span style="color:#88ff44;">🦂[回復阻害・ヴェノム] ${source}の回復 ${rawHeal.toLocaleString()} が完全無効化された！</span>`);
+                    } else {
+                        log(`<span style="color:#88ff44;">🐊[回復阻害・${blocker}] ${source}の回復が${Math.round(block*100)}%カット！（${rawHeal.toLocaleString()} → ${reduced.toLocaleString()}）</span>`);
+                    }
+                    return reduced;
+                }
                 function applyDmgToUnit(unit, idx, baseDmg) {
                     let remaining = baseDmg;
                     if (unit._shield && unit._shield > 0) {
@@ -5842,8 +5984,9 @@
                             }
                         }
                         let healAmt = Math.floor(totalAbsorb * 0.3);
+                        healAmt = applyHealBlock(healAmt, "吸血");
                         bossHp = Math.min(bossMaxHp, bossHp + healAmt);
-                        log(`<span style="color:#f0a;">[吸血] 敵が ${healAmt.toLocaleString()} HP回復した！</span>`);
+                        if (healAmt > 0) log(`<span style="color:#f0a;">[吸血] 敵が ${healAmt.toLocaleString()} HP回復した！</span>`);
                     } else if (sk.effect === "debuff") {
                         // 全体攻撃 + ATK低下（全員にデバフ）
                         for (let idx = 0; idx < party.length; idx++) {
@@ -5919,8 +6062,9 @@
                             continue;
                         }
                         let regenAmt = Math.floor(bossMaxHp * chosenAttack.selfRegen);
+                        regenAmt = applyHealBlock(regenAmt, "自然の力");
                         bossHp = Math.min(bossMaxHp, bossHp + regenAmt);
-                        log(`<span style="color:#f0a;">[自然の力] 敵が ${regenAmt.toLocaleString()} HP回復した！</span>`);
+                        if (regenAmt > 0) log(`<span style="color:#f0a;">[自然の力] 敵が ${regenAmt.toLocaleString()} HP回復した！</span>`);
                         if (chosenAttack.specialMsg) log(`<span style="color:#ffccaa; font-style:italic;">${chosenAttack.specialMsg}</span>`);
                         if (chosenAttack.selfAtkBuff) {
                             bossAtk = Math.floor(bossAtk * chosenAttack.selfAtkBuff);
@@ -7051,33 +7195,51 @@
         const bv = unit.baseVal;
         const atk = unit.atk;
 
+        // 相手側の回復阻害レートを計算
+        function pvpHealBlock(rawHeal, healSource) {
+            let block = 0;
+            if (enemies.some(u => u && u.name === "呪刻の毒神ヴェノム" && u.currentHp > 0)) block = Math.max(block, 1.0);
+            if (enemies.some(u => u && u.name === "毒牙の蛇神セルペンス" && u.currentHp > 0)) block = Math.max(block, 0.7);
+            if (enemies.some(u => u && u.name === "禁断の魔薬師グリモア" && u.currentHp > 0)) block = Math.max(block, 0.4);
+            if (block <= 0) return rawHeal;
+            const reduced = Math.floor(rawHeal * (1 - block));
+            let blocker = block >= 1.0 ? 'ヴェノム' : block >= 0.7 ? 'セルペンス' : 'グリモア';
+            if (block >= 1.0) {
+                healLog += `<span style="color:#88ff44;">🦂[回復阻害] ${healSource}の回復が完全無効化された！</span>`;
+            } else {
+                healLog += `<span style="color:#88ff44;">🐊[回復阻害・${blocker}] ${healSource}の回復が${Math.round(block*100)}%カット！</span>`;
+            }
+            return reduced;
+        }
+
         // 全体回復系
         if (["秩序の女神アストレア","蒼海のマーメイド","天照大御神"].includes(name)) {
             allies.forEach(u => {
                 if (u && u.currentHp > 0) {
-                    let h = Math.floor(atk * (bv/100) * DMG_SCALE / 5);
+                    let h = pvpHealBlock(Math.floor(atk * (bv/100) * DMG_SCALE / 5), name);
                     u.currentHp = Math.min(u.maxHp, u.currentHp + h);
                 }
             });
-            healLog = `<span style="color:#0f0;">${unit.icon}${name}の奥義：味方全体を${Math.floor(atk*(bv/100)*DMG_SCALE/5).toLocaleString()}回復！</span>`;
+            healLog += `<span style="color:#0f0;">${unit.icon}${name}の奥義：味方全体を${pvpHealBlock(Math.floor(atk*(bv/100)*DMG_SCALE/5), name).toLocaleString()}回復！</span>`;
             dmg = 0;
         }
         // 単体回復系（僧侶・麒麟）
         else if (["僧侶","麒麟"].includes(name)) {
             const target = [...allies].filter(u=>u&&u.currentHp>0).sort((a,b)=>(a.currentHp/a.maxHp)-(b.currentHp/b.maxHp))[0];
+
             if (target) {
-                let h = Math.floor(atk * (bv/100) * DMG_SCALE / 5);
+                let h = pvpHealBlock(Math.floor(atk * (bv/100) * DMG_SCALE / 5), name);
                 target.currentHp = Math.min(target.maxHp, target.currentHp + h);
-                healLog = `<span style="color:#0f0;">${unit.icon}${name}の奥義：${target.icon}${target.name}を${h.toLocaleString()}回復！</span>`;
+                healLog += `<span style="color:#0f0;">${unit.icon}${name}の奥義：${target.icon}${target.name}を${h.toLocaleString()}回復！</span>`;
             }
             dmg = 0;
         }
         // 自己回復系（不死鳥フェニックス）
         else if (name === "不死鳥フェニックス") {
             dmg = Math.floor(atk * (bv/100) * DMG_SCALE);
-            let h = Math.floor(dmg / 5);
+            let h = pvpHealBlock(Math.floor(dmg / 5), "不死鳥フェニックス");
             unit.currentHp = Math.min(unit.maxHp, unit.currentHp + h);
-            healLog = `<span style="color:#0f0;">不死鳥の炎！${name}が${h.toLocaleString()}自己回復！</span>`;
+            healLog += `<span style="color:#0f0;">不死鳥の炎！${name}が${h.toLocaleString()}自己回復！</span>`;
         }
         // 龍神ラグナロク（ダメージのみ）
         else if (name === "終焉の龍神ラグナロク") {
@@ -7473,8 +7635,14 @@
             if (oppUnits.some(u=>u&&u.name==="閃光の軍神アレス"&&u.currentHp>0))    { oppSkillRate *= 1.3; pvpLog(`<span style="color:#ff88cc;">⚡[相手閃光戦陣] 相手アレスで相手軍スキル発動率1.3倍！</span>`); }
             if (oppUnits.some(u=>u&&u.name==="星詠みの予言者ミラ"&&u.currentHp>0))  { oppSkillRate *= 1.2; pvpLog(`<span style="color:#ff88cc;">🌠[相手星詠みの奇跡] 相手ミラで相手軍スキル発動率1.2倍！</span>`); }
             oppSkillRate = Math.min(1.0, oppSkillRate);
-
-            // 自軍フェーズ
+            // 回復阻害パッシブ通知（自軍）
+            if (myUnits.some(u=>u&&u.name==="呪刻の毒神ヴェノム"&&u.currentHp>0))     { pvpLog(`<span style="color:#88ff44;">🦂[回復阻害・ヴェノム] 自軍ヴェノムが相手軍の回復を100%無効化！</span>`); }
+            else if (myUnits.some(u=>u&&u.name==="毒牙の蛇神セルペンス"&&u.currentHp>0)) { pvpLog(`<span style="color:#88ff44;">🐊[回復阻害・セルペンス] 自軍セルペンスが相手軍の回復を70%カット！</span>`); }
+            else if (myUnits.some(u=>u&&u.name==="禁断の魔薬師グリモア"&&u.currentHp>0)) { pvpLog(`<span style="color:#88ff44;">⚗️[回復阻害・グリモア] 自軍グリモアが相手軍の回復を40%カット！</span>`); }
+            // 回復阻害パッシブ通知（相手軍）
+            if (oppUnits.some(u=>u&&u.name==="呪刻の毒神ヴェノム"&&u.currentHp>0))     { pvpLog(`<span style="color:#ff8844;">🦂[相手回復阻害・ヴェノム] 相手軍ヴェノムが自軍の回復を100%無効化！</span>`); }
+            else if (oppUnits.some(u=>u&&u.name==="毒牙の蛇神セルペンス"&&u.currentHp>0)) { pvpLog(`<span style="color:#ff8844;">🐊[相手回復阻害・セルペンス] 相手軍セルペンスが自軍の回復を70%カット！</span>`); }
+            else if (oppUnits.some(u=>u&&u.name==="禁断の魔薬師グリモア"&&u.currentHp>0)) { pvpLog(`<span style="color:#ff8844;">⚗️[相手回復阻害・グリモア] 相手軍グリモアが自軍の回復を40%カット！</span>`); }
             for (let i = 0; i < myUnits.length; i++) {
                 await pvpWaitIfPaused();
                 const unit = myUnits[i];
