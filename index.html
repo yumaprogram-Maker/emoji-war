@@ -371,23 +371,73 @@
     @keyframes pop-up { 0% { opacity:1; transform:translateY(0); } 100% { opacity:0; transform:translateY(-80px); } }
 
     /* ========== タイトルロゴ ========== */
-    .title-logo {
-        font-size: 52px; font-weight: 900; letter-spacing: 4px;
-        background: linear-gradient(135deg, #ff0080, #ff6600, #ffd700, #00ffcc, #ff00ff);
-        -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-        color: #ff0080; /* fallback: 文字が見えなくなることを防ぐ */
-        filter: drop-shadow(0 0 18px #ff00cc);
-        animation: logo-shine 3s ease-in-out infinite alternate;
-        line-height: 1.1; margin-bottom: 4px;
+    .title-logo-wrap {
+        position: relative; display: inline-block; text-align: center;
     }
-    .title-logo-sub {
-        font-size: 13px; letter-spacing: 8px; color: #aaa; text-transform: uppercase;
-        margin-bottom: 18px;
+    .title-logo {
+        font-size: 62px; font-weight: 900; letter-spacing: 6px;
+        background: linear-gradient(160deg, #ffffff 0%, #ffd700 20%, #ff6600 40%, #ff0066 60%, #cc00ff 80%, #00eeff 100%);
+        -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        background-size: 300% 300%;
+        color: #ff0080;
+        filter: drop-shadow(0 0 20px #ff00ccaa) drop-shadow(0 0 6px #ffd700aa);
+        animation: logo-shine 4s ease-in-out infinite alternate, logo-bg-shift 6s linear infinite;
+        line-height: 1.05; margin-bottom: 2px;
+        text-stroke: 1px rgba(255,255,255,0.1);
+        -webkit-text-stroke: 1px rgba(255,255,255,0.1);
+        position: relative; z-index: 2;
+    }
+    /* ロゴ背後の光彩レイヤー */
+    .title-logo::before {
+        content: attr(data-text);
+        position: absolute; top: 0; left: 0; width: 100%;
+        background: linear-gradient(160deg, #ffd700, #ff0066, #cc00ff);
+        -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        filter: blur(14px);
+        opacity: 0.55;
+        z-index: -1;
+        animation: logo-glow-pulse 2.5s ease-in-out infinite alternate;
+    }
+    @keyframes logo-bg-shift {
+        0%   { background-position: 0% 50%; }
+        50%  { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
     }
     @keyframes logo-shine {
-        0%   { filter: drop-shadow(0 0 12px #ff0080) drop-shadow(0 0 4px #ffd700); }
-        50%  { filter: drop-shadow(0 0 22px #00ffcc) drop-shadow(0 0 8px #ff00ff); }
-        100% { filter: drop-shadow(0 0 16px #ff6600) drop-shadow(0 0 6px #ff0080); }
+        0%   { filter: drop-shadow(0 0 14px #ff0080cc) drop-shadow(0 0 5px #ffd700aa); transform: scale(1); }
+        30%  { filter: drop-shadow(0 0 28px #00ffcccc) drop-shadow(0 0 10px #ff00ffaa); transform: scale(1.015); }
+        70%  { filter: drop-shadow(0 0 24px #ff6600cc) drop-shadow(0 0 8px #ff0080aa); transform: scale(1.01); }
+        100% { filter: drop-shadow(0 0 20px #cc00ffcc) drop-shadow(0 0 6px #ffd700aa); transform: scale(1); }
+    }
+    @keyframes logo-glow-pulse {
+        from { opacity: 0.35; }
+        to   { opacity: 0.7; }
+    }
+    /* ロゴ上下の装飾ライン */
+    .title-logo-deco-line {
+        width: 280px; height: 2px; margin: 0 auto;
+        background: linear-gradient(90deg, transparent, #ffd700, #ff00ff, #00ffcc, transparent);
+        background-size: 200% 100%;
+        animation: deco-line-sweep 2.5s linear infinite;
+        border-radius: 2px;
+    }
+    .title-logo-deco-line.top { margin-bottom: 8px; }
+    .title-logo-deco-line.bottom { margin-top: 6px; }
+    @keyframes deco-line-sweep {
+        0%   { background-position: -100% 0; }
+        100% { background-position: 200% 0; }
+    }
+    .title-logo-sub {
+        font-size: 11px; letter-spacing: 10px; color: #888; text-transform: uppercase;
+        margin-bottom: 18px; margin-top: 4px;
+        background: linear-gradient(90deg, #555, #aaa, #555);
+        -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        background-size: 200%;
+        animation: sub-shimmer 4s linear infinite;
+    }
+    @keyframes sub-shimmer {
+        0%   { background-position: 0%; }
+        100% { background-position: 200%; }
     }
     .title-deco { font-size: 28px; margin-bottom: 8px; animation: deco-spin 6s linear infinite; display: inline-block; }
     @keyframes deco-spin { 0% { transform: rotate(0deg) scale(1); } 50% { transform: rotate(180deg) scale(1.2); } 100% { transform: rotate(360deg) scale(1); } }
@@ -1457,8 +1507,12 @@
 <div id="startScreen">
   <div class="start-inner">
     <div class="title-deco">⚔️</div>
-    <div class="title-logo">絵文字大戦</div>
-    <div class="title-logo-sub">Emoji war</div>
+    <div class="title-logo-wrap">
+        <div class="title-logo-deco-line top"></div>
+        <div class="title-logo" data-text="絵文字大戦">絵文字大戦</div>
+        <div class="title-logo-deco-line bottom"></div>
+    </div>
+    <div class="title-logo-sub">⚔ Emoji War ⚔</div>
     <div class="user-form">
         <div id="existingUserArea" style="display:none;">
             <p style="font-size:12px; color:#aaa;">保存済みのユーザー</p>
@@ -1662,7 +1716,7 @@
 <div id="rateModal" onclick="closeRateModal()">
     <div class="rate-modal-content" onclick="event.stopPropagation()">
         <div class="rate-modal-title" id="rateModalTitle">📊 排出率</div>
-        <div class="rate-note" id="rateModalNote">※ピックアップキャラは同レアリティの4倍の排出率</div>
+        <div class="rate-note" id="rateModalNote">※ピックアップキャラは同レアリティの7倍の排出率</div>
         <div id="rateModalBody"></div>
         <button class="rate-close-btn" onclick="closeRateModal()">閉じる</button>
     </div>
@@ -2038,6 +2092,9 @@
         "毒牙の蛇神セルペンス":   "猛毒の蛇神が敵の回復を70%封じる！攻撃と阻害を兼ね備えたLRの刺客",
         "星詠みの予言者ミラ":     "星が奥義の発動を告げる！スキル率1.2倍で確かな勝利へ",
         "禁断の魔薬師グリモア":   "禁じられた薬で敵の回復を40%阻害するSSRの異端者。回復メタとして編成価値大！",
+        // 貫通スキルキャラ
+        "虚空の蝶神アプサラス":   "優雅に舞い、すべての守りを蝶のように消し去る貫通の化身",
+        "嵐神バアル":             "天雷は盾も軽減も知らない。嵐神の怒りは全てを貫く",
     };
 
     // ========== 覚醒確定演出 ==========
@@ -2448,17 +2505,35 @@
 
     function _buildHashaCandidates() {
         // LRとURの全キャラをまとめてシャッフルし、5体選ぶ（noGachaキャラは除外）
-        const pool = [];
+        // ピックアップキャラは同レアリティの5倍の重みで選出
+        const PICKUP_WEIGHT = 5;
+        const weightedPool = [];
         ['UR','LR'].forEach(r => {
             const g = gachaData.find(g => g.rarity === r);
-            if (g) g.items.filter(i => !i.noGacha).forEach(item => pool.push({ item, rarityInfo: g }));
+            if (!g) return;
+            const pickupChar = getPickupChar(r);
+            g.items.filter(i => !i.noGacha).forEach(item => {
+                const isPickup = pickupChar && item.name === pickupChar.name;
+                const times = isPickup ? PICKUP_WEIGHT : 1;
+                for (let t = 0; t < times; t++) weightedPool.push({ item, rarityInfo: g, isPickup: isPickup && t === 0 });
+            });
         });
         // Fisher-Yates shuffle
-        for (let i = pool.length - 1; i > 0; i--) {
+        for (let i = weightedPool.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
-            [pool[i], pool[j]] = [pool[j], pool[i]];
+            [weightedPool[i], weightedPool[j]] = [weightedPool[j], weightedPool[i]];
         }
-        return pool.slice(0, 5);
+        // 重複キャラを除去しながら5体選ぶ
+        const seen = new Set();
+        const result = [];
+        for (const entry of weightedPool) {
+            if (!seen.has(entry.item.name)) {
+                seen.add(entry.item.name);
+                result.push(entry);
+            }
+            if (result.length >= 5) break;
+        }
+        return result;
     }
 
 
@@ -2543,7 +2618,8 @@
             {name:"奈落の支配者ヘカトンケイル", icon:"🕷️", hp:42000, atk:4000, skill:"千の腕の呪縛", baseVal: 700, sDesc:"奈落の縛鎖。敵に攻撃力の{n}%ダメージ。[常時・全体]敵のATKを常時50%ダウン"},
             {name:"天壁の守護神エギル", icon:"🛡️", hp:65000, atk:300, skill:"聖盾の号令", baseVal: 18000, sDesc:"敵に少量ダメージを与え、味方全体に{n}の聖盾シールドを付与する。LBで盾の値が上昇", shieldVal: 20000},
             {name:"天命の布告者アナンケ", icon:"🔮", hp:52000, atk:4600, skill:"天命の宣告", baseVal: 500, sDesc:"敵に攻撃力の{n}%ダメージ。[常時]味方全体のスキル発動率1.5倍。", skillRateBoost: 1.5},
-            {name:"呪刻の毒神ヴェノム", icon:"🦂", hp:46000, atk:3500, skill:"デスポイズン・カース", baseVal: 600, sDesc:"敵に攻撃力の{n}%ダメージ。[回復阻害]敵の回復効果を100%無効化する。", healBlock: 1.0}
+            {name:"呪刻の毒神ヴェノム", icon:"🦂", hp:46000, atk:3500, skill:"デスポイズン・カース", baseVal: 600, sDesc:"敵に攻撃力の{n}%ダメージ。[回復阻害]敵の回復効果を100%無効化する。", healBlock: 1.0},
+            {name:"虚空の蝶神アプサラス", icon:"🦋", hp:44000, atk:4800, skill:"滅蝶の幻舞", baseVal: 1000, sDesc:"敵に攻撃力の{n}%ダメージ。[貫通]シールドとダメージ軽減を無視して直撃する。", pierce: true}
         ]},
         { rarity: "LR", color: "#ff00ff", prob: 0.5, canLimitBreak: true, items: [
             {name:"創造神ゼウス", icon:"👁️", hp:19999, atk:888, skill:"神罰の雷槍", baseVal: 500, sDesc:"全知全能の雷。敵に攻撃力の{n}%ダメージを与える。"},
@@ -2560,6 +2636,7 @@
             {name:"聖域の乙女アルテミス", icon:"🌸", hp:28000, atk:200, skill:"月光の聖壁", baseVal: 10000, sDesc:"敵に少量ダメージを与え、味方全体に{n}の月光シールドを付与する。LBで盾の値が上昇", shieldVal: 12000},
             {name:"閃光の軍神アレス", icon:"⚡", hp:24000, atk:1050, skill:"閃光戦陣", baseVal: 220, sDesc:"敵に攻撃力の{n}%ダメージ。[常時]味方全体のスキル発動率1.3倍。", skillRateBoost: 1.3},
             {name:"毒牙の蛇神セルペンス", icon:"🐊", hp:18000, atk:900, skill:"ベノム・インフェクション", baseVal: 550, sDesc:"敵に攻撃力の{n}%ダメージ。[回復阻害]敵の回復効果を70%カットする。", healBlock: 0.7},
+            {name:"嵐神バアル", icon:"⛈", hp:21000, atk:1150, skill:"天雷断滅撃", baseVal: 470, sDesc:"敵に攻撃力の{n}%ダメージ。[貫通]シールドとダメージ軽減を無視して直撃する。", pierce: true},
             // ===== 星の化身 初クリア専用LR（ガチャ非排出・LR枠内ユニーク性能） =====
             // ルナリア：高HP・中ATK、毎ターン全体回復パッシブ（サポート型LR）
             {name:"月の化身ルナリア", icon:"🌕", hp:22000, atk:1050, skill:"月蝕霊閃・真", baseVal: 520,
@@ -2603,7 +2680,8 @@
             {name:"麒麟", icon:"🦒", hp:6500, atk:400, skill:"天界の風", baseVal: 120, sDesc:"天界の息吹。最もHPが減っている味方を攻撃力の{n}%回復する。"},
             {name:"封印の巫女イズナ", icon:"🏮", hp:6200, atk:480, skill:"呪縛の御幣", baseVal: 160, sDesc:"古の封印術。敵に攻撃力の{n}%ダメージ。[常時・全体]敵のATKを常時15%ダウン"},
             {name:"星詠みの予言者ミラ", icon:"🌠", hp:5800, atk:320, skill:"星詠みの奇跡", baseVal: 200, sDesc:"敵に攻撃力の{n}%ダメージ。[常時]味方全体のスキル発動率1.2倍。", skillRateBoost: 1.2},
-            {name:"禁断の魔薬師グリモア", icon:"⚗️", hp:4800, atk:480, skill:"アンチリジェネ・ポーション", baseVal: 160, sDesc:"敵に攻撃力の{n}%ダメージ。[回復阻害]敵の回復効果を40%カットする。", healBlock: 0.4}
+            {name:"禁断の魔薬師グリモア", icon:"⚗️", hp:4800, atk:480, skill:"アンチリジェネ・ポーション", baseVal: 160, sDesc:"敵に攻撃力の{n}%ダメージ。[回復阻害]敵の回復効果を40%カットする。", healBlock: 0.4},
+            {name:"猛虎の闘神ラージュ", icon:"🐯", hp:5300, atk:540, skill:"覇牙貫通爪", baseVal: 125, sDesc:"敵に攻撃力の{n}%ダメージ。[貫通]シールドとダメージ軽減を無視して直撃する。", pierce: true}
         ]},
         { rarity: "SR", color: "#00ffff", prob: 15, canLimitBreak: true, items: [
             {name:"忍者", icon:"🥷", hp:1800, atk:480, skill:"影縫い", baseVal: 80, sDesc:"影を縫い、敵に攻撃力の{n}%ダメージを与える。"},
@@ -2842,6 +2920,14 @@
         { id:"first_ur",       icon:"❤️", name:"URの覚醒",        cond:"初めてURキャラを入手する",       check: u => { const ur = gachaData.find(g=>g.rarity==='UR'); return ur && ur.items.some(i => u.myBox[i.name] !== undefined); } },
         { id:"collect_10",     icon:"📚", name:"絵文字のコレクター",cond:"合計10体以上のキャラを入手する", check: u => Object.keys(u.myBox).length >= 10 },
         { id:"collect_30",     icon:"📖", name:"絵文字の博識者",    cond:"合計30体以上のキャラを入手する", check: u => Object.keys(u.myBox).length >= 30 },
+        // ===== 貫通スキルキャラ称号 =====
+        { id:"got_apsaras",    icon:"🦋", name:"蝶の幻影",          cond:"虚空の蝶神アプサラスを入手する",    check: u => u.myBox["虚空の蝶神アプサラス"] !== undefined },
+        { id:"max_apsaras",    icon:"🦋", name:"蝶神の極致",        cond:"虚空の蝶神アプサラスを10凸にする",  check: u => (u.myBox["虚空の蝶神アプサラス"]||0) >= 10 },
+        { id:"got_baal",       icon:"⛈", name:"嵐の洗礼",          cond:"嵐神バアルを入手する",              check: u => u.myBox["嵐神バアル"] !== undefined },
+        { id:"max_baal",       icon:"⛈", name:"嵐神の申し子",      cond:"嵐神バアルを10凸にする",            check: u => (u.myBox["嵐神バアル"]||0) >= 10 },
+        { id:"got_raju",       icon:"🐯", name:"猛虎の洗礼",        cond:"猛虎の闘神ラージュを入手する",      check: u => u.myBox["猛虎の闘神ラージュ"] !== undefined },
+        { id:"max_raju",       icon:"🐯", name:"闘神の爪痕",        cond:"猛虎の闘神ラージュを10凸にする",    check: u => (u.myBox["猛虎の闘神ラージュ"]||0) >= 10 },
+        { id:"pierce_masters", icon:"⚡", name:"貫通の覇者",        cond:"貫通スキル持ちキャラを全員入手する", check: u => ["虚空の蝶神アプサラス","嵐神バアル","猛虎の闘神ラージュ"].every(n => u.myBox[n] !== undefined) },
     ];
 
     let _titleToastTimer = null;
@@ -3983,12 +4069,12 @@
             if (gachaType === 'ur' && rarity === 'UR') pickupChar = pickupUR;
 
             // 各キャラの排出率計算（重み付き）
-            // ピックアップあり: totalWeight = items.length + 3 (4倍-1倍の差分)
+            // ピックアップあり: totalWeight = items.length + 6 (7倍-1倍の差分)
             // ピックアップなし: 均等
             const hasPickup = !!pickupChar;
             const gachaItems = group.items.filter(i => !i.noGacha);
             const n = gachaItems.length;
-            const totalWeight = hasPickup ? (n + 3) : n;
+            const totalWeight = hasPickup ? (n + 6) : n;
             const rarityRateBase = group.prob / totalProb * 100;
 
             html += `<div class="rate-rarity-block">
@@ -3999,7 +4085,7 @@
 
             for (const item of gachaItems) {
                 const isPickupChar = hasPickup && pickupChar && item.name === pickupChar.name;
-                let charWeight = hasPickup ? (isPickupChar ? 4 : 1) : 1;
+                let charWeight = hasPickup ? (isPickupChar ? 7 : 1) : 1;
                 const charRate = (rarityRateBase * charWeight / totalWeight).toFixed(3);
                 html += `<div class="rate-char-row ${isPickupChar ? 'pickup-row' : ''}">
                     <div class="rate-char-name">
@@ -4459,7 +4545,7 @@
         document.getElementById(activeBannerId).style.display = '';
     }
 
-    // ピックアップ倍率: ピックアップキャラは同レア内で4倍の重みを持つ
+    // ピックアップ倍率: ピックアップキャラは同レア内で7倍の重みを持つ
     function draw(isFever) {
         const filteredData = isFever ? gachaData.slice(0, 3) : gachaData;
 
@@ -4486,10 +4572,10 @@
         }
 
         if (pickupItem) {
-            // ピックアップ: 対象キャラは通常の4倍の重み
-            const totalWeight = items.length + 3; // +3 = 4倍 - 1倍の差分
+            // ピックアップ: 対象キャラは通常の7倍の重み
+            const totalWeight = items.length + 6; // +6 = 7倍 - 1倍の差分
             const r2 = Math.random() * totalWeight;
-            if (r2 < 4) {
+            if (r2 < 7) {
                 return { item: pickupItem, rarityInfo: chosenGroup, isPickup: true };
             } else {
                 // 残りをピックアップ以外から等確率で
@@ -5040,6 +5126,10 @@
         if (unitName === "呪刻の毒神ヴェノム")  return `[効果] 敵に${baseVal}%ダメ。[回復阻害]敵の回復を100%完全無効化`;
         if (unitName === "毒牙の蛇神セルペンス") return `[効果] 敵に${baseVal}%ダメ。[回復阻害]敵の回復を70%カット`;
         if (unitName === "禁断の魔薬師グリモア") return `[効果] 敵に${baseVal}%ダメ。[回復阻害]敵の回復を40%カット`;
+        // ===== 貫通スキルキャラ =====
+        if (unitName === "虚空の蝶神アプサラス") return `[効果] 敵に${baseVal}%ダメ。[⚡貫通]シールドとダメージ軽減を完全無視`;
+        if (unitName === "嵐神バアル")           return `[効果] 敵に${baseVal}%ダメ。[⚡貫通]シールドとダメージ軽減を完全無視`;
+        if (unitName === "猛虎の闘神ラージュ")   return `[効果] 敵に${baseVal}%ダメ。[⚡貫通]シールドとダメージ軽減を完全無視`;
         // ===== 星の化身LRキャラ =====
         if (unitName === "月の化身ルナリア") return `[効果] 敵に${baseVal}%ダメ。スキル時に全体HP10%追加回復。[常時]毎ターン味方全体HP3%回復`;
         if (unitName === "火の化身イグニス")  return `[効果] 敵に${baseVal}%ダメ＋全体追加10%ダメ。[常時]毎ターン自ATK4%上昇`;
@@ -5769,7 +5859,11 @@
                     bossHp -= finalDmg;
                     unit._totalDamage = (unit._totalDamage || 0) + finalDmg;
                     spawnPop(finalDmg);
-                    log(`${unit.name}の${isSkill ? '奥義' : '攻撃'}：敵に <span style="color:#ff0; font-weight:bold;">${finalDmg.toLocaleString()}</span> のダメージ！`);
+                    if (unit.pierce && isSkill) {
+                        log(`<span style="color:#ff00ff;font-weight:bold;">[⚡貫通]</span> ${unit.name}の奥義：敵に <span style="color:#ff0; font-weight:bold;">${finalDmg.toLocaleString()}</span> の直撃ダメージ！（シールド・軽減無視）`);
+                    } else {
+                        log(`${unit.name}の${isSkill ? '奥義' : '攻撃'}：敵に <span style="color:#ff0; font-weight:bold;">${finalDmg.toLocaleString()}</span> のダメージ！`);
+                    }
                 }
                 updateUI(); renderParty();
                 if (isSkill) { slotEl.classList.remove("skill-flash"); slotEl.style.color = ''; document.getElementById("battleField").classList.remove("shake"); }
@@ -6429,17 +6523,14 @@
         if (!userData.incarnationFirst) userData.incarnationFirst = {};
         renderIncarnationDayGrid();
         document.getElementById("incarnationModal").style.display = "flex";
-        // battleViewに遷移（まだいなければ）
-        if (document.getElementById("gachaView").style.display !== "none") {
-            document.getElementById('gachaView').style.display = 'none';
-            document.getElementById('battleView').style.display = 'flex';
-            bgmNormal.pause(); bgmEpic.pause(); bgmFever.pause();
-            document.getElementById('activeUserNameBattle').innerText = currentUser;
-        }
     }
 
     function closeIncarnationModal() {
         document.getElementById("incarnationModal").style.display = "none";
+        // ガチャ画面に戻る（battleViewが表示されていたらガチャに戻す）
+        if (document.getElementById("battleView").style.display !== "none" && !isBattleRunning) {
+            switchToGacha();
+        }
     }
 
     function openIncarnationLevelModal() {
@@ -7416,7 +7507,9 @@
             dmg = Math.floor(atk * (bv/100) * DMG_SCALE);
         }
 
-        return { dmg: Math.max(0, dmg), healLog };
+        // 貫通スキル持ちの場合はpierceフラグを返す
+        const isPierce = !!(unit.pierce);
+        return { dmg: Math.max(0, dmg), healLog, isPierce };
     }
 
     // PVP被ダメ軽減率計算
@@ -7662,13 +7755,20 @@
                     await new Promise(r => setTimeout(r, Math.floor(600 / pvpSpeedMultiplier)));
                     await pvpWaitIfPaused();
 
-                    const { dmg: skillDmg, healLog } = applyPvpSkill(unit, myUnits, oppUnits, DMG_SCALE, "you");
+                    const { dmg: skillDmg, healLog, isPierce: myPierce } = applyPvpSkill(unit, myUnits, oppUnits, DMG_SCALE, "you");
                     if (healLog) pvpLog(healLog);
 
                     if (skillDmg > 0) {
                         // 氷の女王シヴァ：10%で敵スキップ付与は別途、ここでは通常通りダメ
                         const target = aliveOpp[Math.floor(Math.random() * aliveOpp.length)];
                         const tIdx = oppUnits.indexOf(target);
+                        if (myPierce) {
+                            // 貫通：シールドも軽減も無視して直接HP減算
+                            const pierceDmg = Math.max(1, Math.floor(skillDmg * myAtkBuff * (0.9 + Math.random() * 0.2)));
+                            target.currentHp = Math.max(0, target.currentHp - pierceDmg);
+                            unit._totalDamage = (unit._totalDamage || 0) + pierceDmg;
+                            pvpLog('<span style="color:#ff00ff;font-weight:bold;">[⚡貫通] ' + unit.icon + unit.name + 'の奥義がシールドと軽減を無視！→ ' + target.icon + target.name + 'に <span style="color:#ffcc44;font-weight:bold;">' + pierceDmg.toLocaleString() + '</span> の直撃ダメージ！</span>' + (target.currentHp <= 0 ? ' <span style="color:#888;">(撃破！)</span>' : ''));
+                        } else {
                         const gr = calcPvpGlobalReduction(oppUnits);
                         const unitReduction = calcPvpUnitReduction(target, oppUnits);
                         getPvpReductionLogs(target, oppUnits, "opp").forEach(m => pvpLog(m));
@@ -7678,6 +7778,7 @@
                         const actualDmg = applyPvpDamage(target, finalDmg, pvpLog, "#ffcc44");
                         unit._totalDamage = (unit._totalDamage || 0) + actualDmg;
                         pvpLog(unit.icon + unit.name + "の奥義 → " + target.icon + target.name + "に <span style=\"color:#ffcc44;font-weight:bold;\">" + (actualDmg > 0 ? actualDmg.toLocaleString() : "0（シールド完全吸収）") + "</span> ダメージ" + (target.currentHp <= 0 ? " <span style=\"color:#888;\">(撃破！)</span>" : ""));
+                        }
                         // オーディン発動チェック
                         if (target.currentHp <= 0) {
                             myUnits.forEach(ou => {
@@ -7751,11 +7852,16 @@
                     await new Promise(r => setTimeout(r, Math.floor(600 / pvpSpeedMultiplier)));
                     await pvpWaitIfPaused();
 
-                    const { dmg: skillDmg, healLog } = applyPvpSkill(unit, oppUnits, myUnits, DMG_SCALE, "opp");
+                    const { dmg: skillDmg, healLog, isPierce: oppPierce } = applyPvpSkill(unit, oppUnits, myUnits, DMG_SCALE, "opp");
                     if (healLog) pvpLog(healLog);
 
                     if (skillDmg > 0) {
                         const target = aliveMe[Math.floor(Math.random() * aliveMe.length)];
+                        if (oppPierce) {
+                            const pierceDmg = Math.max(1, Math.floor(skillDmg * oppAtkBuff * (0.9 + Math.random() * 0.2)));
+                            target.currentHp = Math.max(0, target.currentHp - pierceDmg);
+                            pvpLog('<span style="color:#ff6600;font-weight:bold;">[⚡貫通] ' + unit.icon + unit.name + 'の奥義がシールドと軽減を無視！→ ' + target.icon + target.name + 'に <span style="color:#ff8844;font-weight:bold;">' + pierceDmg.toLocaleString() + '</span> の直撃ダメージ！</span>' + (target.currentHp <= 0 ? ' <span style="color:#888;">(撃破！)</span>' : ''));
+                        } else {
                         const gr = calcPvpGlobalReduction(myUnits);
                         const unitReduction = calcPvpUnitReduction(target, myUnits);
                         getPvpReductionLogs(target, myUnits, "you").forEach(m => pvpLog(m));
@@ -7763,6 +7869,7 @@
                         if (unit.name === "冥王ハデス") finalDmg = Math.max(1, Math.floor(target.currentHp * (unit.baseVal/100)));
                         const actualDmg = applyPvpDamage(target, finalDmg, pvpLog, "#ff8844");
                         pvpLog(unit.icon + unit.name + "の奥義 → " + target.icon + target.name + "に <span style=\"color:#ff8844;font-weight:bold;\">" + (actualDmg > 0 ? actualDmg.toLocaleString() : "0（シールド完全吸収）") + "</span> ダメージ" + (target.currentHp <= 0 ? " <span style=\"color:#888;\">(撃破！)</span>" : ""));
+                        }
                         if (target.currentHp <= 0) {
                             oppUnits.forEach(ou => {
                                 if (ou && ou.name==="万物の父オーディン" && ou.currentHp>0) {
