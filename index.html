@@ -430,13 +430,13 @@
     .hp-boss { background: linear-gradient(to right, #f00, #ff00ff); }
     .hp-player { background: linear-gradient(to right, #00ffcc, #00ff00); }
     .party-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-top: 20px; }
-    .unit-slot { aspect-ratio: 2/3; background: rgba(255,255,255,0.05); border: 1px dashed #666; border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 10px; cursor: pointer; position: relative; transition: 0.3s; overflow: hidden; }
+    .unit-slot { aspect-ratio: 2/3; background: rgba(255,255,255,0.05); border: 1px dashed #666; border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 10px; cursor: pointer; position: relative; transition: 0.3s; overflow: visible; }
     .unit-slot.occupied { border-style: solid; background: #222; }
     .unit-icon { font-size: 24px; pointer-events: none; }
     .unit-hp-mini { width: 80%; height: 4px; background: #444; margin-top: 4px; pointer-events: none; position: relative; border-radius: 2px; overflow: visible; margin-bottom: 0px; }
     .unit-hp-mini-bar { position: absolute; top: 0; left: 0; height: 100%; border-radius: 2px; }
     .unit-shield-bar { position: absolute; top: -3px; left: 0; height: 10px; border-radius: 2px; background: linear-gradient(to right, #00aaff, #44ddff); opacity: 0.85; box-shadow: 0 0 5px #00aaff, 0 0 2px #fff; pointer-events: none; transition: width 0.3s ease; }
-    .unit-shield-label { position: absolute; top: 6px; left: 50%; transform: translateX(-50%); font-size: 7px; color: #44ddff; font-weight: bold; white-space: nowrap; pointer-events: none; text-shadow: 0 0 4px #00aaff; }
+    .unit-shield-label { display: none; }
     /* バフ・デバフアイコンエリア */
     /* バフ・デバフアイコンエリア：absoluteにしてスロットの高さに影響させない */
     .unit-status-icons { position: absolute; bottom: 2px; left: 0; right: 0; display: flex; flex-wrap: nowrap; justify-content: center; gap: 1px; pointer-events: none; overflow: hidden; height: 12px; }
