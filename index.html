@@ -43,6 +43,113 @@
     .card-ssr { border: 2px solid var(--ssr); }
     .card-sr { border: 2px solid var(--sr); }
     .card-r { border: 1px solid var(--r); }
+    @keyframes ex-border-pulse {
+        0%   { box-shadow: 0 0 20px #ffffff, 0 0 40px #e0e0e0, 0 0 60px #ffffff; border-color: #ffffff; }
+        25%  { box-shadow: 0 0 24px #f0f0f0, 0 0 48px #ffffff, 0 0 72px #e8e8e8; border-color: #f0f0f0; }
+        50%  { box-shadow: 0 0 30px #ffffff, 0 0 60px #f5f5f5, 0 0 90px #ffffff; border-color: #ffffff; }
+        75%  { box-shadow: 0 0 24px #e8e8e8, 0 0 48px #ffffff, 0 0 72px #f0f0f0; border-color: #e8e8e8; }
+        100% { box-shadow: 0 0 20px #ffffff, 0 0 40px #e0e0e0, 0 0 60px #ffffff; border-color: #ffffff; }
+    }
+    @keyframes ex-bg-rainbow {
+        0%   { background: linear-gradient(135deg, #1a1a1a, #2a2a2a); }
+        33%  { background: linear-gradient(135deg, #222222, #333333); }
+        66%  { background: linear-gradient(135deg, #1e1e1e, #2e2e2e); }
+        100% { background: linear-gradient(135deg, #1a1a1a, #2a2a2a); }
+    }
+    .card-ex {
+        border: 3px solid #ffffff;
+        animation: ex-border-pulse 1.2s infinite, ex-bg-rainbow 2s infinite;
+        position: relative;
+        overflow: visible !important;
+    }
+    .card-ex::before {
+        content: '☸EX☸';
+        position: absolute;
+        top: -14px; left: 50%; transform: translateX(-50%);
+        background: linear-gradient(90deg, #ffffff, #d0d0d0, #ffffff, #e8e8e8, #ffffff);
+        background-size: 200%;
+        animation: ex-label-shine 1s linear infinite;
+        -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        font-size: 8px; font-weight: bold; white-space: nowrap;
+        filter: drop-shadow(0 0 4px #ffffff);
+    }
+    @keyframes ex-label-shine { 0% { background-position: 0% } 100% { background-position: 200% } }
+
+    /* ========== EXオーバーレイ ========== */
+    #ex-overlay {
+        display: none; position: fixed; top:0; left:0; width:100%; height:100%;
+        background: #000; z-index: 9500;
+        justify-content: center; align-items: center; flex-direction: column;
+        overflow: hidden;
+    }
+    #ex-overlay.active { display: flex; }
+    @keyframes ex-crack-in { 0% { opacity:0; transform:scaleY(0); } 100% { opacity:1; transform:scaleY(1); } }
+    .ex-crack-line {
+        position: absolute; top: 50%; left: 50%;
+        width: 3px; height: 60vh;
+        background: linear-gradient(to bottom, transparent, #ffffff, #e0e0e0, transparent);
+        transform-origin: top center;
+        animation: ex-crack-in 0.15s ease-out forwards;
+        box-shadow: 0 0 8px #ffffff, 0 0 16px #e0e0e0;
+    }
+    @keyframes ex-shatter { 0%{ opacity:1; transform:translate(0,0) rotate(0deg) scale(1); } 100%{ opacity:0; transform:translate(var(--tx),var(--ty)) rotate(var(--tr)) scale(0.2); } }
+    .ex-shatter-piece {
+        position: absolute;
+        width: 30px; height: 30px;
+        background: linear-gradient(135deg, #ffffff88, #e0e0e088);
+        border: 1px solid #fff;
+        animation: ex-shatter 0.6s ease-out forwards;
+        clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+    }
+    #ex-char-display {
+        position: relative; z-index: 2; text-align: center;
+        animation: ex-char-appear 0.5s ease-out forwards;
+    }
+    @keyframes ex-char-appear {
+        0% { opacity:0; transform:scale(0.3) rotate(-10deg); filter:brightness(5); }
+        60% { transform:scale(1.15) rotate(2deg); filter:brightness(2); }
+        100% { opacity:1; transform:scale(1) rotate(0deg); filter:brightness(1); }
+    }
+    @keyframes ex-rainbow-text {
+        0%  { color: #ffffff; text-shadow: 0 0 20px #ffffff, 0 0 40px #e0e0e0; }
+        25% { color: #f0f0f0; text-shadow: 0 0 24px #f0f0f0, 0 0 48px #ffffff; }
+        50% { color: #ffffff; text-shadow: 0 0 30px #ffffff, 0 0 60px #e8e8e8; }
+        75% { color: #e8e8e8; text-shadow: 0 0 24px #e8e8e8, 0 0 48px #ffffff; }
+        100%{ color: #ffffff; text-shadow: 0 0 20px #ffffff, 0 0 40px #e0e0e0; }
+    }
+    #ex-rarity-badge {
+        font-size: 48px; font-weight: 900; letter-spacing: 8px;
+        animation: ex-rainbow-text 1s infinite;
+        margin-bottom: 10px;
+    }
+    #ex-icon-display { font-size: 80px; margin: 10px 0; filter: drop-shadow(0 0 20px #fff); }
+    #ex-name-display {
+        font-size: 18px; font-weight: bold; color: #fff;
+        text-shadow: 0 0 10px #ffffff, 0 0 20px #e0e0e0;
+        margin: 10px 0;
+    }
+    #ex-close-btn {
+        margin-top: 20px; padding: 12px 30px;
+        background: linear-gradient(90deg, #888888, #dddddd, #ffffff, #dddddd, #888888);
+        background-size: 200%; animation: ex-label-shine 1s infinite;
+        border: none; border-radius: 30px; color: #000;
+        font-size: 16px; font-weight: bold; cursor: pointer;
+        box-shadow: 0 0 20px #ffffff; z-index: 2; position: relative;
+    }
+    /* EXスキルオーバーレイ */
+    #exSkillOverlay {
+        display:none; position:absolute; top:50%; left:50%;
+        transform:translate(-50%,-50%);
+        z-index: 800; text-align:center; pointer-events:none;
+    }
+    #exSkillOverlay.active { display:block; }
+    @keyframes ex-hit-pop { 0%{opacity:0;transform:scale(0.3);} 50%{opacity:1;transform:scale(1.3);} 100%{opacity:1;transform:scale(1);} }
+    #exHitCounter {
+        font-size:60px; font-weight:900;
+        animation: ex-rainbow-text 0.5s infinite, ex-hit-pop 0.2s ease-out;
+        text-shadow: 0 0 30px currentColor;
+    }
+    #exHitLabel { font-size:14px; color:#fff; text-shadow: 0 0 10px #ffffff; letter-spacing:4px; }
     
     @keyframes upgrade-flash { 0% { transform: scale(1); filter: brightness(1); } 50% { transform: scale(1.2); filter: brightness(3); box-shadow: 0 0 50px #fff; } 100% { transform: scale(1); filter: brightness(1); } }
     .upgrading { animation: upgrade-flash 1s ease-out; z-index: 100; }
@@ -326,10 +433,16 @@
     .unit-slot { aspect-ratio: 2/3; background: rgba(255,255,255,0.05); border: 1px dashed #666; border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 10px; cursor: pointer; position: relative; transition: 0.3s; }
     .unit-slot.occupied { border-style: solid; background: #222; }
     .unit-icon { font-size: 24px; pointer-events: none; }
-    .unit-hp-mini { width: 80%; height: 4px; background: #444; margin-top: 4px; pointer-events: none; position: relative; border-radius: 2px; overflow: visible; }
+    .unit-hp-mini { width: 80%; height: 4px; background: #444; margin-top: 4px; pointer-events: none; position: relative; border-radius: 2px; overflow: visible; margin-bottom: 14px; }
     .unit-hp-mini-bar { position: absolute; top: 0; left: 0; height: 100%; border-radius: 2px; }
     .unit-shield-bar { position: absolute; top: -3px; left: 0; height: 10px; border-radius: 2px; background: linear-gradient(to right, #00aaff, #44ddff); opacity: 0.85; box-shadow: 0 0 5px #00aaff, 0 0 2px #fff; pointer-events: none; transition: width 0.3s ease; }
     .unit-shield-label { position: absolute; top: 6px; left: 50%; transform: translateX(-50%); font-size: 7px; color: #44ddff; font-weight: bold; white-space: nowrap; pointer-events: none; text-shadow: 0 0 4px #00aaff; }
+    /* バフ・デバフアイコンエリア */
+    .unit-status-icons { display: flex; flex-wrap: wrap; justify-content: center; gap: 1px; margin-top: 0px; min-height: 10px; pointer-events: none; }
+    .status-icon { font-size: 8px; line-height: 1; position: relative; cursor: default; pointer-events: auto; }
+    .status-icon[title]:hover::after { content: attr(title); position: absolute; bottom: 110%; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.95); border: 1px solid #aaa; padding: 3px 6px; border-radius: 4px; font-size: 9px; white-space: nowrap; color: #fff; z-index: 9999; }
+    .pvp-mini-status-icons { display: flex; flex-wrap: wrap; justify-content: center; gap: 1px; margin-top: 2px; min-height: 8px; }
+    .pvp-status-icon { font-size: 7px; line-height: 1; }
     .unit-slot:hover::after { content: attr(data-info); position: absolute; bottom: 110%; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.95); border: 1px solid #fff; padding: 8px; width: 160px; font-size: 10px; border-radius: 5px; z-index: 5000; pointer-events: none; white-space: pre-wrap; color: #fff; text-align: left; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
     .owned-list .unit-slot:nth-child(5n):hover::after, .owned-list .unit-slot:nth-child(5n-1):hover::after { left: auto; right: 0; transform: translateX(0); }
     .owned-list .unit-slot:nth-child(5n+1):hover::after { left: 0; transform: translateX(0); }
@@ -1603,7 +1716,7 @@
                 ✦ 化身の第一段階を初クリアすると<b>限定LRキャラ</b>が手に入ります！<br>
                 ✦ 段階的なクリアで専用<b>称号</b>もアンロック！<br>
                 ⚠️ 化身は通常ボスより強力。高LBの絵文字で挑もう。<br>
-                ⚠️ 敗北するとバトル終了し、ガチャ画面に戻ります（絵文字は一時休眠）。<br>
+                ⚠️ 敗北するとバトル終了し、ガチャ画面に戻ります<br>
                 🔑 化身バトルには専用の<b>フィールドエフェクト・BGM</b>が流れます。
             </div>
         </div>
@@ -1620,7 +1733,7 @@
         </div>
 
         <div style="background:rgba(20,100,40,0.15); border:1px solid rgba(80,200,100,0.35); border-radius:12px; padding:14px; margin-bottom:16px;">
-            <div style="font-size:13px; font-weight:bold; color:#66ff88; margin-bottom:8px;">🌿 絵文字の庭 <span style="font-size:10px; color:#aaffcc;">ver 2.2</span></div>
+            <div style="font-size:13px; font-weight:bold; color:#66ff88; margin-bottom:8px;">🌿 絵文字の庭 </div>
             <div style="font-size:12px; color:#ccc; line-height:1.7;">
                 召喚した絵文字たちを最大5体まで<b>庭に招待</b>してのんびり眺めよう！<br>
                 ✦ 虹・小鳥・花びらが舞う<b>かわいい庭園</b>を楽しもう！<br>
@@ -1642,6 +1755,24 @@
 <div class="ur-shockwave-ring" id="urShockwave1"></div>
 <div class="ur-shockwave-ring" id="urShockwave2" style="animation-delay:0.3s;border-color:#ffaa00;"></div>
 <div class="ur-shockwave-ring" id="urShockwave3" style="animation-delay:0.6s;border-color:#ff6600;"></div>
+
+<!-- ========== EX排出演出オーバーレイ ========== -->
+<div id="ex-overlay">
+    <canvas id="exParticleCanvas" style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:1;"></canvas>
+    <div id="ex-char-display">
+        <div id="ex-rarity-badge">✦ EX ✦</div>
+        <div id="ex-icon-display">✖️</div>
+        <div id="ex-name-display">転輪聖王・釈迦</div>
+        <div style="font-size:12px; color:#aaa; margin:5px 0; letter-spacing:2px;">━━ 千手転輪・無限の慈悲と覇撃 ━━</div>
+        <button id="ex-close-btn" onclick="closeEXOverlay()">✦ 召喚結果を確認 ✦</button>
+    </div>
+</div>
+
+<!-- ========== EXスキル演出オーバーレイ ========== -->
+<div id="exSkillOverlay">
+    <div id="exHitCounter">1HIT</div>
+    <div id="exHitLabel">千手転輪</div>
+</div>
 
 <!-- ========== 開発者モードUI ========== -->
 <div id="devBadge">⚙ DEVELOPER MODE ⚙</div>
@@ -1687,6 +1818,14 @@
                 </select>
             </div>
             <div style="font-size:11px; color:#00ffcc; margin-top:4px;" id="devEffectStatus">🎯 ガチャボタンを押すと設定した演出が発動します</div>
+            <hr style="border-color:#330033; margin:10px 0;">
+            <div style="font-size:10px; color:#888; margin-bottom:6px;">☸ EXキャラ排出演出（即時プレビュー）</div>
+            <div style="margin-bottom:6px;">
+                <label style="font-size:10px; color:#aaa;">EXキャラ選択：</label>
+                <select id="devExChar" class="dev-lb-select" style="margin-bottom:6px;"></select>
+            </div>
+            <button class="dev-lb-btn" onclick="devTriggerEXOverlay()" style="background:#1a001a; border-color:#ffffff; color:#fff; font-size:11px; width:100%; padding:8px;">☸ EX排出演出を今すぐ発動</button>
+            <div style="font-size:10px; color:#888; margin-top:4px;" id="devExStatus">▲ ボタンを押すとEX演出が即時発動します</div>
         </div>
         <!-- 凸操作タブ -->
         <div class="dev-tab-content" id="devTab-lb">
@@ -1934,6 +2073,7 @@
                     <div id="bossHpBar" class="hp-bar-fill hp-boss"></div>
                 </div>
                 <div id="bossHpText" style="font-size:12px; margin-top:5px;">HP: -- / --</div>
+                <div id="bossStatusIcons" style="display:flex;flex-wrap:wrap;justify-content:center;gap:3px;margin-top:6px;min-height:0;padding:0 4px;"></div>
             </div>
             <div id="battleLog" class="battle-log">パーティーを編成して、いざ魔王城へ。</div>
             <div class="player-area">
@@ -2055,6 +2195,15 @@
     let bossMaxHp = 15000;
     let bossHp = 15000;
     let bossAtk = 100;
+    let bossChargeMultiplier = 1.0; // チャージ倍率（グローバル管理）
+    // ボスの状態フラグ（updateUIから参照するためグローバルで管理）
+    const bossStatus = {
+        isCharging: false,       // チャージ中
+        chargeMultiplier: 1.0,   // チャージ倍率
+        isRegen: false,          // 自己回復中（このターン）
+        atkBoosted: false,       // ATK強化済み（元のATKと比較用）
+        originalAtk: 100,        // 戦闘開始時のATK
+    };
 
     // ========== ガチャタイプ管理 ==========
     let currentGachaType = 'standard'; // 'standard' | 'lr' | 'ur'
@@ -2102,6 +2251,7 @@
         // 貫通スキルキャラ
         "虚空の蝶神アプサラス":   "優雅に舞い、すべての守りを蝶のように消し去る貫通の化身",
         "嵐神バアル":             "天雷は盾も軽減も知らない。嵐神の怒りは全てを貫く",
+        "転輪聖王・釈迦":   "千手転輪：スキル発動時に敵全員のシールドを解除、さらにシールド・軽減を完全無視する貫通5連撃。各ヒットがランダムな敵を狙う。全5撃の総ダメージは最高峰",
     };
 
     // ========== 覚醒確定演出 ==========
@@ -2337,6 +2487,205 @@
         const canvas = document.getElementById('kk-canvas');
         canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
         if (_kakuseiResolve) { _kakuseiResolve(); _kakuseiResolve = null; }
+    }
+
+    // ========== EX排出演出 ==========
+    let _exResolve = null;
+    let _exAnimHandle = null;
+
+    async function showEXOverlay(item) {
+        const overlay = document.getElementById('ex-overlay');
+        document.getElementById('ex-icon-display').textContent = item.icon;
+        document.getElementById('ex-name-display').textContent = item.name;
+        overlay.classList.add('active');
+
+        // 3段階の画面クラック演出
+        for (let wave = 0; wave < 3; wave++) {
+            _triggerScreenCrack(overlay);
+            _playEXSound(wave);
+            await new Promise(r => setTimeout(r, 400));
+        }
+
+        const canvas = document.getElementById('exParticleCanvas');
+        _exParticles(canvas);
+
+        return new Promise(r => { _exResolve = r; });
+    }
+
+    function closeEXOverlay() {
+        const overlay = document.getElementById('ex-overlay');
+        overlay.classList.remove('active');
+        if (_exAnimHandle) { cancelAnimationFrame(_exAnimHandle); _exAnimHandle = null; }
+        const canvas = document.getElementById('exParticleCanvas');
+        if (canvas) canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
+        // クラックラインとシャードを削除
+        overlay.querySelectorAll('.ex-crack-line, .ex-shatter-piece').forEach(e => e.remove());
+        if (_exResolve) { _exResolve(); _exResolve = null; }
+    }
+
+    function _triggerScreenCrack(container) {
+        // 既存クラック削除
+        container.querySelectorAll('.ex-crack-line, .ex-shatter-piece').forEach(e => e.remove());
+        // 12本の放射状クラックライン
+        for (let i = 0; i < 12; i++) {
+            const line = document.createElement('div');
+            line.className = 'ex-crack-line';
+            const angle = (i / 12) * 360;
+            line.style.transform = `rotate(${angle}deg)`;
+            line.style.animationDelay = `${i * 0.02}s`;
+            container.appendChild(line);
+            setTimeout(() => { if (line.parentNode) line.remove(); }, 800);
+        }
+        // 20個の飛散パーツ
+        for (let i = 0; i < 20; i++) {
+            const shard = document.createElement('div');
+            shard.className = 'ex-shatter-piece';
+            const tx = (Math.random() - 0.5) * 300;
+            const ty = (Math.random() - 0.5) * 300;
+            const tr = (Math.random() - 0.5) * 720;
+            shard.style.cssText = `left:${40 + Math.random()*20}%;top:${40 + Math.random()*20}%;--tx:${tx}px;--ty:${ty}px;--tr:${tr}deg;animation-delay:${Math.random()*0.2}s;`;
+            container.appendChild(shard);
+            setTimeout(() => { if (shard.parentNode) shard.remove(); }, 800);
+        }
+    }
+
+    function _exParticles(canvas) {
+        const W = canvas.width = window.innerWidth;
+        const H = canvas.height = window.innerHeight;
+        const ctx = canvas.getContext('2d');
+        const particles = [];
+        const colors = ['#ff00ff','#00ffff','#ffff00','#ff6600','#00ff88','#ff0088','#ffffff'];
+        for (let k = 0; k < 250; k++) {
+            const angle = Math.random() * Math.PI * 2;
+            const speed = 1 + Math.random() * 8;
+            particles.push({
+                x: W/2, y: H/2,
+                vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed - 1,
+                r: 1 + Math.random() * 6,
+                color: colors[Math.floor(Math.random() * colors.length)],
+                alpha: 1, decay: 0.005 + Math.random() * 0.01, gravity: 0.05
+            });
+        }
+        // 3つの展開リング
+        const rings = [{r:0, maxR:W*0.7, alpha:1, color:'#ff00ff'},{r:0, maxR:W*0.5, alpha:1, color:'#00ffff'},{r:0, maxR:W*0.9, alpha:0.8, color:'#ffff00'}];
+        let frame = 0;
+        function animate() {
+            ctx.clearRect(0,0,W,H);
+            // 放射グラデーション背景
+            const grad = ctx.createConicGradient(frame * 0.02, W/2, H/2);
+            grad.addColorStop(0, '#ff00ff11');
+            grad.addColorStop(0.25, '#00ffff11');
+            grad.addColorStop(0.5, '#ffff0011');
+            grad.addColorStop(0.75, '#ff660011');
+            grad.addColorStop(1, '#ff00ff11');
+            ctx.fillStyle = grad;
+            ctx.fillRect(0,0,W,H);
+            // リング
+            rings.forEach(ring => {
+                if (ring.r < ring.maxR) { ring.r += 12; ring.alpha -= 0.015; }
+                if (ring.alpha > 0) {
+                    ctx.beginPath(); ctx.arc(W/2, H/2, ring.r, 0, Math.PI*2);
+                    ctx.strokeStyle = ring.color; ctx.globalAlpha = Math.max(0, ring.alpha);
+                    ctx.lineWidth = 3; ctx.stroke(); ctx.globalAlpha = 1;
+                }
+            });
+            // パーティクル
+            particles.forEach(p => {
+                p.x += p.vx; p.y += p.vy; p.vy += p.gravity; p.alpha -= p.decay;
+                if (p.alpha <= 0) return;
+                ctx.globalAlpha = p.alpha;
+                ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+                ctx.fillStyle = p.color; ctx.fill();
+                ctx.globalAlpha = 1;
+            });
+            frame++;
+            if (particles.some(p => p.alpha > 0) || rings.some(r => r.alpha > 0)) {
+                _exAnimHandle = requestAnimationFrame(animate);
+            }
+        }
+        animate();
+    }
+
+    function _playEXSound(wave) {
+        try {
+            const ac = new (window.AudioContext || window.webkitAudioContext)();
+            // サブベース爆発
+            const sub = ac.createOscillator();
+            const subGain = ac.createGain();
+            sub.type = 'sine'; sub.frequency.setValueAtTime(40, ac.currentTime);
+            sub.frequency.exponentialRampToValueAtTime(20, ac.currentTime + 0.5);
+            subGain.gain.setValueAtTime(0.6, ac.currentTime);
+            subGain.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 0.5);
+            sub.connect(subGain); subGain.connect(ac.destination);
+            sub.start(); sub.stop(ac.currentTime + 0.5);
+            // 上昇トーン
+            const rise = ac.createOscillator();
+            const riseGain = ac.createGain();
+            rise.type = 'sawtooth';
+            rise.frequency.setValueAtTime(200 + wave * 200, ac.currentTime);
+            rise.frequency.exponentialRampToValueAtTime(800 + wave * 400, ac.currentTime + 0.4);
+            riseGain.gain.setValueAtTime(0.3, ac.currentTime);
+            riseGain.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 0.4);
+            rise.connect(riseGain); riseGain.connect(ac.destination);
+            rise.start(); rise.stop(ac.currentTime + 0.4);
+            // ファンファーレ（wave==2のみ）
+            if (wave === 2) {
+                const notes = [523, 659, 784, 1047, 1319, 1568, 2093];
+                notes.forEach((freq, i) => {
+                    const osc = ac.createOscillator();
+                    const g = ac.createGain();
+                    osc.type = 'square'; osc.frequency.value = freq;
+                    g.gain.setValueAtTime(0, ac.currentTime + i * 0.06);
+                    g.gain.linearRampToValueAtTime(0.15, ac.currentTime + i * 0.06 + 0.03);
+                    g.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + i * 0.06 + 0.2);
+                    osc.connect(g); g.connect(ac.destination);
+                    osc.start(ac.currentTime + i * 0.06);
+                    osc.stop(ac.currentTime + i * 0.06 + 0.25);
+                });
+            }
+        } catch(e) {}
+    }
+
+    function showEXSkillOverlay(hitNum, totalHits) {
+        const overlay = document.getElementById('exSkillOverlay');
+        const counter = document.getElementById('exHitCounter');
+        const label = document.getElementById('exHitLabel');
+        counter.textContent = `${hitNum}HIT`;
+        label.textContent = `千手転輪 (${hitNum}/${totalHits})`;
+        // HITごとにアニメーションをリセット（毎回ポップアニメーションを再生）
+        counter.style.animation = 'none';
+        void counter.offsetHeight; // 強制リフロー
+        counter.style.animation = 'ex-rainbow-text 0.5s infinite, ex-hit-pop 0.2s ease-out';
+        overlay.classList.add('active');
+    }
+
+    function hideEXSkillOverlay() {
+        document.getElementById('exSkillOverlay').classList.remove('active');
+    }
+
+    function _playEXHitSound(hitNum) {
+        try {
+            const ac = new (window.AudioContext || window.webkitAudioContext)();
+            const baseFreq = 300 + hitNum * 150;
+            const osc = ac.createOscillator();
+            const gain = ac.createGain();
+            osc.type = 'square'; osc.frequency.value = baseFreq;
+            gain.gain.setValueAtTime(0.25, ac.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 0.15);
+            osc.connect(gain); gain.connect(ac.destination);
+            osc.start(); osc.stop(ac.currentTime + 0.15);
+            // ノイズバースト
+            const buf = ac.createBuffer(1, ac.sampleRate * 0.05, ac.sampleRate);
+            const data = buf.getChannelData(0);
+            for (let i = 0; i < data.length; i++) data[i] = (Math.random()*2-1) * 0.3;
+            const src = ac.createBufferSource();
+            const noiseGain = ac.createGain();
+            src.buffer = buf;
+            noiseGain.gain.setValueAtTime(0.4, ac.currentTime);
+            noiseGain.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 0.05);
+            src.connect(noiseGain); noiseGain.connect(ac.destination);
+            src.start();
+        } catch(e) {}
     }
 
     // ========== 絶対覇者確定演出 ==========
@@ -2609,6 +2958,12 @@
 
     // 共通のガチャ＆バトルデータ
     const gachaData = [
+        { rarity: "EX", color: "#ffffff", prob: 0.05, canLimitBreak: true, items: [
+            {name:"転輪聖王・釈迦", icon:"☸", hp:150000, atk:9999,
+              skill:"千手転輪", baseVal: 1500,
+              sDesc:"無限の慈悲と破壊力が解き放たれる奥義。発動時に敵全員のシールドを解除し、シールド・ダメージ軽減を無視する「貫通」攻撃を攻撃力の{n}%×5連撃を放つ",
+              pierce: true, spreadPierce: true, hitCount: 5}
+        ]},
         { rarity: "UR", color: "#ff0000", prob: 0.2, canLimitBreak: true, items: [
             {name:"終焉の龍神ラグナロク", icon:"🐉", hp:50000, atk:5500, skill:"天終の咆哮", baseVal: 1350, sDesc:"敵に攻撃力の{n}%のダメージを与える。"},
             {name:"秩序の女神アストレア", icon:"⚖️", hp:45000, atk:4500, skill:"ジャッジメント・レイ", baseVal: 800, sDesc:"敵にダメージを与え、味方全体を攻撃力の{n}%回復する。"},
@@ -2713,7 +3068,7 @@
             {name:"毒キノコ", icon:"🍄", hp:500, atk:10, skill:"胞子", baseVal: 5, sDesc:"毒の胞子。敵に攻撃力の{n}%ダメージを与える。"},
             {name:"野犬", icon:"🐕", hp:450, atk:55, skill:"遠吠え", baseVal: 10, sDesc:"鋭い牙。敵に攻撃力の{n}%ダメージを与える。"},
             {name:"幽霊", icon:"👻", hp:100, atk:40, skill:"憑依", baseVal: 12, sDesc:"霊障攻撃。敵に攻撃力の{n}%ダメージを与える。"}
-        ]}
+        ]},
     ];
 
     function saveToLocal() {
@@ -2902,6 +3257,11 @@
         // 全化身lv3・lv7クリア系（中間難易度）
         { id:"inc_all_lv3",    icon:"🌟", name:"化身の求道者",    cond:"全ての化身を難易度3でクリアする", check: u => !!(u.incarnation) && [0,1,2,3,4,5,6].every(d => u.incarnation[d] && u.incarnation[d][2]) },
         { id:"inc_all_lv7",    icon:"💫", name:"化身の剛者",      cond:"全ての化身を難易度7でクリアする", check: u => !!(u.incarnation) && [0,1,2,3,4,5,6].every(d => u.incarnation[d] && u.incarnation[d][6]) },
+
+        // ===== EX称号 =====
+        { id:"got_shaka",     icon:"☸", name:"転輪聖王の目撃者",  cond:"転輪聖王・釈迦を入手する",          check: u => u.myBox["転輪聖王・釈迦"] !== undefined },
+        { id:"max_shaka",     icon:"☸", name:"千手転輪の継承者",   cond:"転輪聖王・釈迦を10凸にする",        check: u => (u.myBox["転輪聖王・釈迦"]||0) >= 10 },
+        { id:"ex_obtained",   icon:"🌈", name:"伝説を超えし者",    cond:"EXレアリティのキャラを入手する",          check: u => { const ex = (typeof gachaData !== "undefined") && gachaData.find(g=>g.rarity==="EX"); return ex && ex.items.some(i => u.myBox[i.name] !== undefined); } },
 
         // ===== 絵文字の庭 称号 =====
         { id:"garden_first",   icon:"🌿", name:"庭主のはじまり",  cond:"絵文字の庭に初めてキャラを招待する", check: u => !!(u.gardenVisit) },
@@ -3596,7 +3956,7 @@
     function buildDevCharGrid() {
         const grid = document.getElementById("devCharGrid");
         grid.innerHTML = "";
-        const rarityColors = { UR: '#ff4444', LR: '#ff00ff', SSR: '#ffd700', SR: '#00ffff', R: '#cd7f32' };
+        const rarityColors = { UR: '#ff4444', LR: '#ff00ff', SSR: '#ffd700', SR: '#00ffff', R: '#cd7f32', EX: '#ffffff' };
         gachaData.forEach(group => {
             group.items.forEach(item => {
                 const btn = document.createElement("button");
@@ -3665,6 +4025,47 @@
                 }
             };
         }
+        // devExCharセレクトを初期化（EXキャラ一覧）
+        const exSel = document.getElementById("devExChar");
+        if (exSel) {
+            exSel.innerHTML = '';
+            const exGroup = gachaData.find(g => g.rarity === "EX");
+            if (exGroup && exGroup.items.length > 0) {
+                exGroup.items.forEach(item => {
+                    const opt = document.createElement("option");
+                    opt.value = item.name;
+                    opt.textContent = item.icon + " " + item.name;
+                    exSel.appendChild(opt);
+                });
+            } else {
+                const opt = document.createElement("option");
+                opt.value = "";
+                opt.textContent = "（EXキャラなし）";
+                exSel.appendChild(opt);
+            }
+        }
+    }
+
+    async function devTriggerEXOverlay() {
+        if (!isDev()) return;
+        const exSel = document.getElementById("devExChar");
+        const charName = exSel ? exSel.value : '';
+        const exGroup = gachaData.find(g => g.rarity === "EX");
+        if (!exGroup || exGroup.items.length === 0) {
+            const status = document.getElementById("devExStatus");
+            if (status) { status.textContent = "❌ EXキャラが存在しません"; status.style.color = "#ff4444"; }
+            return;
+        }
+        let item = charName ? exGroup.items.find(i => i.name === charName) : null;
+        if (!item) item = exGroup.items[0];
+        document.getElementById("devPanel").classList.remove("open");
+        const status = document.getElementById("devExStatus");
+        if (status) { status.textContent = `✅ ${item.icon} ${item.name} のEX演出を発動中...`; status.style.color = '#ff0080'; }
+        initAudio();
+        bgmEpic.pause(); bgmNormal.pause(); bgmFever.pause();
+        await showEXOverlay(item);
+        bgmNormal.play().catch(() => {});
+        if (status) { status.textContent = "▲ ボタンを押すとEX演出が即時発動します"; status.style.color = "#888"; }
     }
 
     async function devFireKakusei(forceRarity) {
@@ -4060,8 +4461,8 @@
         // フィーバーなし前提で計算
         const totalProb = gachaData.reduce((s, g) => s + g.prob, 0);
 
-        const rarityColors = { UR: '#ff4444', LR: '#ff00ff', SSR: '#ffd700', SR: '#00ffff', R: '#cd7f32' };
-        const rarityBg = { UR: '#2a0000', LR: '#1a0020', SSR: '#1a1500', SR: '#001a1a', R: '#1a1000' };
+        const rarityColors = { UR: '#ff4444', LR: '#ff00ff', SSR: '#ffd700', SR: '#00ffff', R: '#cd7f32', EX: '#ffffff' };
+        const rarityBg = { UR: '#2a0000', LR: '#1a0020', SSR: '#1a1500', SR: '#001a1a', R: '#1a1000', EX: '#1a1a1a' };
 
         let html = '';
         for (const group of gachaData) {
@@ -4215,6 +4616,47 @@
             bossHpBar.style.width = Math.max(0, hpPercent) + "%";
             bossHpText.innerText = `HP: ${Math.max(0, Math.floor(bossHp)).toLocaleString()} / ${bossMaxHp.toLocaleString()}`;
         }
+        // ===== ボスのステータスアイコン更新（魔王の塔・化身戦共通）=====
+        const bossStatusEl = document.getElementById("bossStatusIcons");
+        if (bossStatusEl) {
+            const bossIcons = [];
+
+            // ── ボス自身の状態（バフ）──
+            if (bossChargeMultiplier > 1.0)
+                bossIcons.push({e:'⚡', label:'チャージ', t:`次ターン攻撃ダメージ×${bossChargeMultiplier.toFixed(1)}倍`, c:'#ffdd44', bg:'rgba(255,200,0,0.15)'});
+            if (typeof bossAtk !== "undefined" && typeof bossStatus !== "undefined" && bossAtk > bossStatus.originalAtk * 1.04)
+                bossIcons.push({e:'💢', label:'ATK↑', t:`攻撃力強化中 (${bossAtk.toLocaleString()})`, c:'#ff6600', bg:'rgba(255,100,0,0.15)'});
+            if (typeof bossShield !== "undefined" && bossShield > 0)
+                bossIcons.push({e:'🛡️', label:`盾${Math.floor(bossShield/1000)}k`, t:`シールド: ${bossShield.toLocaleString()}`, c:'#44ddff', bg:'rgba(0,170,255,0.15)'});
+
+            // ── プレイヤーによる敵デバフ ──
+            if (typeof party !== "undefined" && party) {
+                if (party.some(u => u && u.name === "奈落の支配者ヘカトンケイル" && u.currentHp > 0))
+                    bossIcons.push({e:'🕷️', label:'ATK-50%', t:'攻撃ダウン50%（ヘカトンケイルの呪縛）', c:'#ff44ff', bg:'rgba(200,0,200,0.15)'});
+                if (party.some(u => u && u.name === "幽冥の審判者ノルン" && u.currentHp > 0))
+                    bossIcons.push({e:'⚖️', label:'ATK-30%', t:'攻撃ダウン30%（ノルンの裁き）', c:'#cc88ff', bg:'rgba(150,50,200,0.12)'});
+                if (party.some(u => u && u.name === "封印の巫女イズナ" && u.currentHp > 0))
+                    bossIcons.push({e:'🔮', label:'ATK-15%', t:'攻撃ダウン15%（イズナの封印）', c:'#aa66ff', bg:'rgba(120,30,180,0.12)'});
+                // 回復阻害
+                if (party.some(u => u && u.name === "呪刻の毒神ヴェノム" && u.currentHp > 0))
+                    bossIcons.push({e:'🦂', label:'回復無効', t:'回復効果100%無効（ヴェノムの毒）', c:'#88ff44', bg:'rgba(80,200,0,0.12)'});
+                else if (party.some(u => u && u.name === "毒牙の蛇神セルペンス" && u.currentHp > 0))
+                    bossIcons.push({e:'🐊', label:'回復-70%', t:'回復効果70%カット（セルペンスの毒牙）', c:'#aaff66', bg:'rgba(80,180,0,0.12)'});
+                else if (party.some(u => u && u.name === "禁断の魔薬師グリモア" && u.currentHp > 0))
+                    bossIcons.push({e:'⚗️', label:'回復-40%', t:'回復効果40%カット（グリモアの秘薬）', c:'#ccff88', bg:'rgba(60,160,0,0.10)'});
+            }
+
+            if (bossIcons.length === 0) {
+                bossStatusEl.innerHTML = '';
+            } else {
+                bossStatusEl.innerHTML = bossIcons.map(ic =>
+                    `<span style="display:inline-flex;flex-direction:column;align-items:center;gap:0;background:${ic.bg};border:1px solid ${ic.c}44;border-radius:5px;padding:2px 4px;cursor:default;min-width:28px;" title="${ic.t}">` +
+                    `<span style="font-size:12px;line-height:1.1">${ic.e}</span>` +
+                    `<span style="font-size:7px;color:${ic.c};white-space:nowrap;font-weight:bold;line-height:1.1">${ic.label}</span>` +
+                    `</span>`
+                ).join('');
+            }
+        }
     }
 
     function triggerURSpecialEffect() {
@@ -4345,8 +4787,11 @@
             userData.totalDraws++;
             let res;
             if (userData.totalDraws % pityThreshold === 0) {
-                const highRarityIdx = Math.random() < 0.33 ? 0 : 1;
-                const group = gachaData[highRarityIdx];
+                // 天井はEX除外（UR/LRのみ）
+                const urGroup = gachaData.find(g => g.rarity === 'UR');
+                const lrGroup = gachaData.find(g => g.rarity === 'LR');
+                const highRarityGroup = Math.random() < 0.33 ? urGroup : lrGroup;
+                const group = highRarityGroup || gachaData[0];
                 const gItems = group.items.filter(i => !i.noGacha);
                 res = { item: gItems[Math.floor(Math.random() * gItems.length)], rarityInfo: group };
             } else {
@@ -4475,17 +4920,34 @@
                 : res.isPickup
                 ? `<div style="position:absolute;top:2px;left:2px;background:#ffd700;color:#000;font-size:7px;font-weight:bold;padding:1px 3px;border-radius:3px;">PU!</div>`
                 : '';
+            const cardClass = rarity === 'EX' ? 'card-ex' : `card-${rarity.toLowerCase()}`;
+            const rarityLabel = rarity === 'EX' ? `<span style="background:linear-gradient(90deg,#aaaaaa,#ffffff,#e0e0e0,#ffffff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:900;">EX</span>` : rarity;
             card.innerHTML = `<div class="card-back"></div>
-                              <div class="card-front card-${rarity.toLowerCase()}" style="position:relative;">
+                              <div class="card-front ${cardClass}" style="position:relative;">
                                 ${pickupBadge}
                                 <div class="icon-area" style="font-size:22px;">${res.item.icon}</div>
-                                <div class="rarity-text" style="font-size:9px; font-weight:bold; margin-top:5px; color:#333;">${rarity}</div>
+                                <div class="rarity-text" style="font-size:9px; font-weight:bold; margin-top:5px; color:#333;">${rarityLabel}</div>
                               </div>`;
             card.onclick = () => showDetail(charName);
             grid.appendChild(card);
             cardElements.push({element: card, data: res});
 
-            if (rarity === "UR" || rarity === "LR") {
+            if (rarity === "EX") {
+                // EX演出: まずUR演出を出してから専用オーバーレイ
+                hasUR = true;
+                await new Promise(r => setTimeout(r, 800));
+                playSE('ur');
+                const flash = document.getElementById("flash");
+                flash.className = "flash-ur";
+                setTimeout(() => flash.className = "", 4000);
+                triggerURSpecialEffect();
+                await new Promise(r => setTimeout(r, 1000));
+                // EX専用の画面クラック＆オーバーレイ
+                initAudio();
+                bgmEpic.pause(); bgmNormal.pause(); bgmFever.pause();
+                await showEXOverlay(res.item);
+                bgmEpic.currentTime = 0; bgmEpic.play().catch(() => {});
+            } else if (rarity === "UR" || rarity === "LR") {
                 await new Promise(r => setTimeout(r, 800));
                 playSE(rarity.toLowerCase());
                 const flash = document.getElementById("flash");
@@ -4554,11 +5016,28 @@
 
     // ピックアップ倍率: ピックアップキャラは同レア内で7倍の重みを持つ
     function draw(isFever) {
-        const filteredData = isFever ? gachaData.slice(0, 3) : gachaData;
+        // フィーバー時: 1%でEX排出チェック（EXはフィーバーでのみ1%、通常時は0.05%）
+        const exGroup = gachaData.find(g => g.rarity === 'EX');
+        if (isFever && exGroup) {
+            if (Math.random() < 0.01) {
+                const exItems = exGroup.items.filter(i => !i.noGacha);
+                return { item: exItems[Math.floor(Math.random() * exItems.length)], rarityInfo: exGroup, isPickup: false, isEX: true };
+            }
+        }
+
+        // EXを除いた通常プール（フィーバーは上位3レア＋EX除外）
+        const filteredData = isFever ? gachaData.filter(g => ['UR','LR','SSR'].includes(g.rarity)) : gachaData.filter(g => g.rarity !== 'EX');
 
         // まずレアリティを決定
         let totalProb = 0;
         filteredData.forEach(g => totalProb += g.prob);
+
+        // 通常時EX: 0.05%の確率でEX当選
+        if (!isFever && exGroup && Math.random() < 0.0005) {
+            const exItems = exGroup.items.filter(i => !i.noGacha);
+            return { item: exItems[Math.floor(Math.random() * exItems.length)], rarityInfo: exGroup, isPickup: false, isEX: true };
+        }
+
         const rand = Math.random() * totalProb;
         let current = 0;
         let chosenGroup = filteredData[filteredData.length - 1];
@@ -4640,7 +5119,8 @@
         gachaData.forEach(group => {
             const section = document.createElement("div");
             section.className = "rarity-section";
-            section.innerHTML = `<div class="rarity-label" style="background:${group.color}">${group.rarity}</div>`;
+            const labelTextColor = group.rarity === 'EX' ? '#111111' : '#ffffff';
+            section.innerHTML = `<div class="rarity-label" style="background:${group.color};color:${labelTextColor}">${group.rarity}</div>`;
             const grid = document.createElement("div");
             grid.className = "collection-grid";
             group.items.forEach(item => {
@@ -5153,7 +5633,7 @@
     let _pvpSelectorSort = 'rarity';
     let _pvpBattleSelectorSort = 'rarity';
 
-    const RARITY_ORDER = { 'UR': 5, 'LR': 4, 'SSR': 3, 'SR': 2, 'R': 1 };
+    const RARITY_ORDER = { 'EX': 6, 'UR': 5, 'LR': 4, 'SSR': 3, 'SR': 2, 'R': 1 };
 
     function getCharSortValue(item, group, lb, sortKey) {
         const mul = item.name === "無限の可能性メビウス" ? getMebiusMul(lb) : Math.pow(1.2, lb);
@@ -5282,6 +5762,119 @@
         closeSelector();
     }
 
+
+    // ===== バフ・デバフアイコン生成ヘルパー =====
+    function getUnitStatusIcons(unit, side) {
+        // side: 'ally' or 'enemy'
+        const icons = [];
+        if (!unit) return '';
+
+        // シールド
+        if (unit._shield && unit._shield > 0)
+            icons.push({e:'🛡️', label:`盾${unit._shield>=1000?Math.floor(unit._shield/1000)+'k':unit._shield}`, t:`シールド: ${unit._shield.toLocaleString()} (スタック${unit._shieldCount||0}/2)`, c:'#44ddff', bg:'rgba(0,170,255,0.12)'});
+        // 攻撃アップ（ATKがoriginalAtkより高い）
+        if (unit.originalAtk && unit.atk > unit.originalAtk)
+            icons.push({e:'⬆️', label:'ATK↑', t:`攻撃アップ (${unit.atk.toLocaleString()} / 元:${unit.originalAtk.toLocaleString()})`, c:'#ffaa00', bg:'rgba(255,160,0,0.12)'});
+        // 攻撃ダウン（ATKがoriginalAtkより低い）
+        if (unit.originalAtk && unit.atk < unit.originalAtk)
+            icons.push({e:'⬇️', label:'ATK↓', t:`攻撃ダウン (${unit.atk.toLocaleString()} / 元:${unit.originalAtk.toLocaleString()})`, c:'#ff88ff', bg:'rgba(200,0,200,0.12)'});
+        // 防御アップ (フォルトゥナの加護: 被ダメ50%軽減)
+        if (unit._fortunaShield)
+            icons.push({e:'🍀', label:'防御↑', t:'防御アップ: 被ダメ50%軽減（フォルトゥナの加護）', c:'#aaffaa', bg:'rgba(100,255,100,0.10)'});
+        // 防御アップ (テラスの大地: 被ダメ30%軽減)
+        if (unit._terrasShield)
+            icons.push({e:'🪨', label:'防御↑', t:'防御アップ: 被ダメ30%軽減（テラスの大地守護）', c:'#aa7733', bg:'rgba(150,100,30,0.15)'});
+        // アテナ盾（99%軽減）
+        if (unit._athenaShield)
+            icons.push({e:'🦉', label:'無敵', t:'絶対防御: 被ダメ99%カット（イージスの盾）', c:'#00ffff', bg:'rgba(0,200,200,0.12)'});
+        // DoT（月蝕の呪い）
+        if (unit._moonDot && unit._moonDot > 0)
+            icons.push({e:'🌑', label:`呪${unit._moonDot}T`, t:`月蝕の呪い: 残り${unit._moonDot}ターン`, c:'#8888ff', bg:'rgba(80,80,200,0.12)'});
+        // アクア凍結（敵行動スキップ）
+        if (unit._aquaFreezeEnemy)
+            icons.push({e:'❄️', label:'凍結', t:'凍結: 次の行動がスキップされる', c:'#00ccff', bg:'rgba(0,180,220,0.12)'});
+
+        // パッシブバフ（パーティ内に特定キャラがいる場合 - メインバトル用）
+        if (typeof party !== 'undefined' && party) {
+            if (party.some(u => u && u.name === '魔王ルシファー' && u.currentHp > 0))
+                icons.push({e:'👼', label:'ATK×1.3', t:'攻撃アップ×1.3（ルシファーのバフ）', c:'#ff88ff', bg:'rgba(200,50,200,0.10)'});
+            if (party.some(u => u && u.name === '太陽神ラー' && u.currentHp > 0))
+                icons.push({e:'🦅', label:'ATK×1.2', t:'攻撃アップ×1.2（ラーのバフ）', c:'#ffdd44', bg:'rgba(220,180,0,0.10)'});
+            if (party.some(u => u && u.name === '日の化身ソレイユ' && u.currentHp > 0))
+                icons.push({e:'🌞', label:'ATK×1.2', t:'攻撃アップ×1.2（ソレイユのバフ）', c:'#ffaa00', bg:'rgba(200,140,0,0.10)'});
+            // スキル発動率アップ
+            if (party.some(u => u && u.name === '天命の布告者アナンケ' && u.currentHp > 0))
+                icons.push({e:'🔮', label:'SP×1.5', t:'スキル発動率×1.5（アナンケの天命）', c:'#cc88ff', bg:'rgba(150,80,200,0.12)'});
+            if (party.some(u => u && u.name === '閃光の軍神アレス' && u.currentHp > 0))
+                icons.push({e:'⚡', label:'SP×1.3', t:'スキル発動率×1.3（アレスの閃光）', c:'#88aaff', bg:'rgba(80,120,200,0.12)'});
+            if (party.some(u => u && u.name === '星詠みの予言者ミラ' && u.currentHp > 0))
+                icons.push({e:'🌠', label:'SP×1.2', t:'スキル発動率×1.2（ミラの星詠み）', c:'#ffffaa', bg:'rgba(200,200,80,0.10)'});
+        }
+
+        if (icons.length === 0) return '';
+        return '<div class="unit-status-icons">' + icons.map(ic =>
+            `<span class="status-icon" title="${ic.t}" style="color:${ic.c};background:${ic.bg||'rgba(255,255,255,0.07)'};border:1px solid ${ic.c}55;border-radius:4px;padding:1px 2px;display:inline-flex;flex-direction:column;align-items:center;min-width:14px;">`+
+            `${ic.e}` +
+            (ic.label ? `<span style="font-size:5px;color:${ic.c};line-height:1;white-space:nowrap">${ic.label}</span>` : '') +
+            `</span>`
+        ).join('') + '</div>';
+    }
+
+    // PVP用ステータスアイコン（バトル全体バフも含む）
+    function getPvpStatusIcons(unit, side, myUnits, oppUnits) {
+        const icons = [];
+        if (!unit) return '';
+
+        if (unit._shield && unit._shield > 0)
+            icons.push({e:'🛡️', label:`盾${unit._shield>=1000?Math.floor(unit._shield/1000)+'k':unit._shield}`, t:`シールド: ${unit._shield.toLocaleString()}`, c:'#44ddff', bg:'rgba(0,170,255,0.12)'});
+        if (unit.originalAtk && unit.atk > unit.originalAtk)
+            icons.push({e:'⬆️', label:'ATK↑', t:`攻撃アップ (${unit.atk.toLocaleString()})`, c:'#ffaa00', bg:'rgba(255,160,0,0.12)'});
+        if (unit.originalAtk && unit.atk < unit.originalAtk)
+            icons.push({e:'⬇️', label:'ATK↓', t:`攻撃ダウン (${unit.atk.toLocaleString()})`, c:'#ff88ff', bg:'rgba(200,0,200,0.12)'});
+        if (unit._fortunaShield)
+            icons.push({e:'🍀', label:'防御↑', t:'防御アップ: 被ダメ50%軽減', c:'#aaffaa', bg:'rgba(100,255,100,0.10)'});
+        if (unit._terrasShield)
+            icons.push({e:'🪨', label:'防御↑', t:'防御アップ: 被ダメ30%軽減', c:'#aa7733', bg:'rgba(150,100,30,0.15)'});
+        if (unit._athenaShield)
+            icons.push({e:'🦉', label:'無敵', t:'絶対防御: 被ダメ99%カット', c:'#00ffff', bg:'rgba(0,200,200,0.12)'});
+        if (unit._moonDot && unit._moonDot > 0)
+            icons.push({e:'🌑', label:`呪${unit._moonDot}T`, t:`月蝕の呪い: 残り${unit._moonDot}ターン`, c:'#8888ff', bg:'rgba(80,80,200,0.12)'});
+        if (unit._aquaFreezeEnemy)
+            icons.push({e:'❄️', label:'凍結', t:'凍結: 次の行動スキップ', c:'#00ccff', bg:'rgba(0,180,220,0.12)'});
+
+        // パッシブバフ（同パーティに特定キャラがいる場合）
+        const allies = side === 'my' ? myUnits : oppUnits;
+        if (allies && allies.some(u => u && u.name === '魔王ルシファー' && u.currentHp > 0))
+            icons.push({e:'👼', label:'ATK×1.3', t:'攻撃アップ×1.3（ルシファーのバフ）', c:'#ff88ff', bg:'rgba(200,50,200,0.10)'});
+        if (allies && allies.some(u => u && u.name === '太陽神ラー' && u.currentHp > 0))
+            icons.push({e:'🦅', label:'ATK×1.2', t:'攻撃アップ×1.2（ラーのバフ）', c:'#ffdd44', bg:'rgba(220,180,0,0.10)'});
+        if (allies && allies.some(u => u && u.name === '日の化身ソレイユ' && u.currentHp > 0))
+            icons.push({e:'🌞', label:'ATK×1.2', t:'攻撃アップ×1.2（ソレイユのバフ）', c:'#ffaa00', bg:'rgba(200,140,0,0.10)'});
+        // スキル発動率アップ
+        if (allies && allies.some(u => u && u.name === '天命の布告者アナンケ' && u.currentHp > 0))
+            icons.push({e:'🔮', label:'SP×1.5', t:'スキル発動率×1.5（アナンケの天命）', c:'#cc88ff', bg:'rgba(150,80,200,0.12)'});
+        if (allies && allies.some(u => u && u.name === '閃光の軍神アレス' && u.currentHp > 0))
+            icons.push({e:'⚡', label:'SP×1.3', t:'スキル発動率×1.3（アレスの閃光）', c:'#88aaff', bg:'rgba(80,120,200,0.12)'});
+        if (allies && allies.some(u => u && u.name === '星詠みの予言者ミラ' && u.currentHp > 0))
+            icons.push({e:'🌠', label:'SP×1.2', t:'スキル発動率×1.2（ミラの星詠み）', c:'#ffffaa', bg:'rgba(200,200,80,0.10)'});
+        // デバフ（敵チームにヘカトンケイル等がいる場合）
+        const enemies = side === 'my' ? oppUnits : myUnits;
+        if (enemies && enemies.some(u => u && u.name === '奈落の支配者ヘカトンケイル' && u.currentHp > 0))
+            icons.push({e:'🕷️', label:'ATK-50%', t:'攻撃ダウン50%（ヘカトンケイルの呪縛）', c:'#ff44ff', bg:'rgba(200,0,200,0.12)'});
+        if (enemies && enemies.some(u => u && u.name === '幽冥の審判者ノルン' && u.currentHp > 0))
+            icons.push({e:'⚖️', label:'ATK-30%', t:'攻撃ダウン30%（ノルンの裁き）', c:'#cc88ff', bg:'rgba(150,50,200,0.12)'});
+        if (enemies && enemies.some(u => u && u.name === '封印の巫女イズナ' && u.currentHp > 0))
+            icons.push({e:'🔮', label:'ATK-15%', t:'攻撃ダウン15%（イズナの封印）', c:'#aa66ff', bg:'rgba(120,30,180,0.12)'});
+
+        if (icons.length === 0) return '';
+        return '<div class="pvp-mini-status-icons">' + icons.map(ic =>
+            `<span class="pvp-status-icon" title="${ic.t}" style="color:${ic.c};background:${ic.bg||'rgba(255,255,255,0.07)'};border:1px solid ${ic.c}55;border-radius:3px;padding:1px 2px;display:inline-flex;flex-direction:column;align-items:center;min-width:12px;">`+
+            `${ic.e}` +
+            (ic.label ? `<span style="font-size:5px;color:${ic.c};line-height:1;white-space:nowrap">${ic.label}</span>` : '') +
+            `</span>`
+        ).join('') + '</div>';
+    }
+
     function renderParty() {
         party.forEach((unit, idx) => {
             const slot = document.getElementById(`slot-${idx}`);
@@ -5298,7 +5891,8 @@
                     ? Math.min(100, (unit._shield / unit.maxHp) * 100) : 0;
                 const shieldLabel = (unit._shield && unit._shield > 0)
                     ? `<div class="unit-shield-label">🛡️${unit._shield.toLocaleString()}</div>` : '';
-                slot.innerHTML = `<div class="unit-icon">${unit.icon}</div><div style="font-weight:bold; font-size:8px; text-align:center;">${unit.name}</div><div class="unit-hp-mini"><div class="unit-hp-mini-bar hp-bar-fill hp-player" style="width:${hpPer}%"></div><div class="unit-shield-bar" style="width:${shieldPer}%"></div>${shieldLabel}</div>`;
+                const statusIconsHtml = getUnitStatusIcons(unit, 'ally');
+                slot.innerHTML = `<div class="unit-icon">${unit.icon}</div><div style="font-weight:bold; font-size:8px; text-align:center;">${unit.name}</div><div class="unit-hp-mini"><div class="unit-hp-mini-bar hp-bar-fill hp-player" style="width:${hpPer}%"></div><div class="unit-shield-bar" style="width:${shieldPer}%"></div>${shieldLabel}</div>${statusIconsHtml}`;
                 slot.style.opacity = unit.currentHp <= 0 ? "0.4" : "1";
             } else {
                 slot.innerHTML = "SELECT";
@@ -5348,21 +5942,22 @@
             linesEl.appendChild(line);
         }
 
-        // アニメーションリセット
+        // アニメーションリセット（強制リフローでアニメーションを毎回再生）
         overlay.classList.remove('active');
-        void overlay.offsetHeight;
+        void overlay.offsetHeight; // 強制リフロー：アニメーションリセットに必要
         overlay.classList.add('active');
+        const textBoxEl = document.getElementById('skillOverlayText');
         skillNameEl.style.animation = 'none';
         charNameEl.style.animation = 'none';
+        textBoxEl.style.animation = 'none';
         void skillNameEl.offsetHeight;
         skillNameEl.style.animation = '';
         charNameEl.style.animation = '';
-        document.getElementById('skillOverlayText').style.animation = 'none';
-        void document.getElementById('skillOverlayText').offsetHeight;
-        document.getElementById('skillOverlayText').style.animation = '';
+        textBoxEl.style.animation = '';
 
-        // 自動非表示
-        setTimeout(() => { overlay.classList.remove('active'); }, 600);
+        // 自動非表示（IDを返してEXキャラ時にキャンセルできるようにする）
+        const _autoHideId = setTimeout(() => { overlay.classList.remove('active'); }, 600);
+        return _autoHideId;
     }
     function log(msg) {
         const logger = document.getElementById("battleLog");
@@ -5607,7 +6202,12 @@
         }
 
         let turn = 1;
-        let bossChargeMultiplier = 1.0; // 次ターンへの強化チャージ
+        bossChargeMultiplier = 1.0; // チャージ倍率リセット
+        bossStatus.originalAtk = bossAtk; // 戦闘開始時ATKを記録
+        bossStatus.isCharging = false;
+        bossStatus.chargeMultiplier = 1.0;
+        bossStatus.isRegen = false;
+        bossStatus.atkBoosted = false;
         while (bossHp > 0) {
             let athenaShield = false;
             let globalAtkBuff = 1.0;
@@ -5647,6 +6247,7 @@
                 const slotEl = document.getElementById(`slot-${i}`);
                 const isSkill = isOrderTurn || Math.random() < globalSkillRate; 
                 let damage = unit.atk;
+                let _skillAutoHide = null; // EXキャラのclearTimeout用にブロック外で宣言
                 
                 if (isSkill) {
                     unit._skillCount = (unit._skillCount || 0) + 1;
@@ -5654,9 +6255,9 @@
                     slotEl.classList.add("skill-flash");
                     slotEl.style.color = unit.rarityColor || '#fff';
                     // レアリティキー判定
-                    const rarityKeyMap = { '#ff0000':'ur', '#ff00ff':'lr', '#ffd700':'ssr', '#00ffff':'sr', '#cd7f32':'r' };
-                    const rKey = rarityKeyMap[unit.rarityColor] || 'sr';
-                    showSkillOverlay(unit, unit.rarityColor || '#fff', rKey);
+                    const rarityKeyMap = { '#ff0000':'ur', '#ff00ff':'lr', '#ffd700':'ssr', '#00ffff':'sr', '#cd7f32':'r', '#ffffff':'ur' };
+                    const rKey = rarityKeyMap[unit.rarityColor] || 'ur';
+                    _skillAutoHide = showSkillOverlay(unit, unit.rarityColor || '#fff', rKey);
                     playChargeSfx();
                     document.getElementById("battleField").classList.add("shake");
                     await new Promise(r => setTimeout(r, Math.floor(600 / battleSpeedMultiplier)));
@@ -5700,12 +6301,12 @@
                         party.forEach((u, idx) => {
                             if (u && u.currentHp > 0) {
                                 u._shieldCount = (u._shieldCount || 0);
-                                if (u._shieldCount < 3) {
+                                if (u._shieldCount < 2) {
                                     u._shield = (u._shield || 0) + shieldAmt;
                                     u._shieldCount++;
-                                    log(`<span style="color:#00ccff;">${unit.icon}${unit.name}の加護！${u.name}に ${shieldAmt.toLocaleString()} のシールド付与！（スタック ${u._shieldCount}/3）</span>`);
+                                    log(`<span style="color:#00ccff;">${unit.icon}${unit.name}の加護！${u.name}に ${shieldAmt.toLocaleString()} のシールド付与！（スタック ${u._shieldCount}/2）</span>`);
                                 } else {
-                                    log(`<span style="color:#558;">[シールド] ${u.name}はシールドが最大スタック(3)に達しているため追加付与できない！</span>`);
+                                    log(`<span style="color:#558;">[シールド] ${u.name}はシールドが最大スタック(2)に達しているため追加付与できない！</span>`);
                                 }
                             }
                         });
@@ -5863,13 +6464,43 @@
 
                 const finalDmg = damage > 0 ? Math.floor(damage * globalAtkBuff * (0.9 + Math.random() * 0.2)) : 0;
                 if (finalDmg > 0) {
-                    bossHp -= finalDmg;
-                    unit._totalDamage = (unit._totalDamage || 0) + finalDmg;
-                    spawnPop(finalDmg);
-                    if (unit.pierce && isSkill) {
-                        log(`<span style="color:#ff00ff;font-weight:bold;">[⚡貫通]</span> ${unit.name}の奥義：敵に <span style="color:#ff0; font-weight:bold;">${finalDmg.toLocaleString()}</span> の直撃ダメージ！（シールド・軽減無視）`);
+                    // EX千手転輪: スキル時5連撃
+                    if (unit.spreadPierce && isSkill) {
+                        // EXキャラ：通常skillOverlayを即消してEX専用演出に切り替え
+                        clearTimeout(_skillAutoHide);
+                        document.getElementById('skillOverlay').classList.remove('active');
+                        const hitCount = unit.hitCount || 5;
+                        // 釈迦：敵のシールドを完全解除（ボスシールド未実装のためスキップ）
+                        // TODO: ボスシールド実装時に有効化
+                        // if (bossShield && bossShield > 0) {
+                        //     log(`<span style="color:#ffffff;font-weight:bold;">[☸ シールド解除] 千手転輪の無限の慈悲が敵のシールドを粉砕！（${(bossShield||0).toLocaleString()} 消滅）</span>`);
+                        //     bossShield = 0;
+                        // }
+                        log(`<span style="color:#ffffff;font-weight:bold;">[☸ 千手転輪発動！]</span> ${unit.name}が千手転輪を解き放つ！`);
+                        for (let h = 1; h <= hitCount; h++) {
+                            const hitDmg = Math.max(1, Math.floor(unit.atk * (unit.baseVal/100) * globalAtkBuff * (0.9 + Math.random()*0.2)));
+                            bossHp -= hitDmg;
+                            unit._totalDamage = (unit._totalDamage || 0) + hitDmg;
+                            spawnPop(hitDmg);
+                            _playEXHitSound(h);
+                            showEXSkillOverlay(h, hitCount);
+                            log(`<span style="color:#ffffff;font-weight:bold;">[☸千手 ${h}HIT]</span> 直撃ダメージ <span style="color:#ffffff; font-weight:bold;">${hitDmg.toLocaleString()}</span>！`);
+                            updateUI(); renderParty();
+                            if (bossHp <= 0) break;
+                            await new Promise(r => setTimeout(r, Math.floor(300 / battleSpeedMultiplier)));
+                            await waitIfPaused();
+                        }
+                        hideEXSkillOverlay();
+                        log(`<span style="color:#ffffff;font-weight:bold;">☸ 千手転輪完了！合計ダメージ ${unit._totalDamage.toLocaleString()}！</span>`);
                     } else {
-                        log(`${unit.name}の${isSkill ? '奥義' : '攻撃'}：敵に <span style="color:#ff0; font-weight:bold;">${finalDmg.toLocaleString()}</span> のダメージ！`);
+                        bossHp -= finalDmg;
+                        unit._totalDamage = (unit._totalDamage || 0) + finalDmg;
+                        spawnPop(finalDmg);
+                        if (unit.pierce && isSkill) {
+                            log(`<span style="color:#ff00ff;font-weight:bold;">[⚡貫通]</span> ${unit.name}の奥義：敵に <span style="color:#ff0; font-weight:bold;">${finalDmg.toLocaleString()}</span> の直撃ダメージ！（シールド・軽減無視）`);
+                        } else {
+                            log(`${unit.name}の${isSkill ? '奥義' : '攻撃'}：敵に <span style="color:#ff0; font-weight:bold;">${finalDmg.toLocaleString()}</span> のダメージ！`);
+                        }
                     }
                 }
                 updateUI(); renderParty();
@@ -6119,6 +6750,7 @@
                         // ATK強化 + 全体攻撃（ラスボス専用）
                         bossAtk = Math.floor(bossAtk * 1.15);
                         bossChargeMultiplier = 1.0;
+                        bossStatus.isCharging = false; bossStatus.chargeMultiplier = 1.0;
                         log(`<span style="color:#ff4400;">[魔王強化] 終焉の魔王のATKがさらに15%上昇した！</span>`);
                         for (let idx = 0; idx < party.length; idx++) {
                             const unit = party[idx];
@@ -6138,6 +6770,7 @@
                         }
                     }
                     bossChargeMultiplier = 1.0;
+                    bossStatus.isCharging = false; bossStatus.chargeMultiplier = 1.0;
 
                 } else {
                     // ===== 通常攻撃ターン（バリエーション）=====
@@ -6181,6 +6814,8 @@
                     // チャージ行動（次ターン強化）
                     if (chosenAttack.charge) {
                         bossChargeMultiplier = 2.5;
+                        bossStatus.isCharging = true;
+                        bossStatus.chargeMultiplier = 2.5;
                         log(`<span style="color:#ff4400; font-weight:bold;">[チャージ] 敵が力を溜めている！次の攻撃が大幅強化される！</span>`);
                         bossAtk = Math.floor(bossAtk * 1.05);
                         log(`<span style="color:#ffcc00; font-size:12px;">魔王の力はターンとともに上昇する…！（ボスの基本ATK: ${bossAtk.toLocaleString()}）</span>`);
@@ -6231,6 +6866,7 @@
                             log(`<span style="color:#ff88ff;">[化身の呪縛] 生存中の全絵文字のATKが${Math.round(chosenAttack.debuffAtk*100)}%低下した！</span>`);
                     }
                     bossChargeMultiplier = 1.0;
+                    bossStatus.isCharging = false; bossStatus.chargeMultiplier = 1.0;
                 }
 
                 bossAtk = Math.floor(bossAtk * 1.05);
@@ -6698,6 +7334,10 @@
         } else {
             bgmUrl = bgmIncarnation[dayIdx] || bgmList.f4;
         }
+        // ガチャBGMを全て停止してから化身BGMを再生
+        bgmNormal.pause(); bgmNormal.currentTime = 0;
+        bgmEpic.pause(); bgmEpic.currentTime = 0;
+        bgmFever.pause(); bgmFever.currentTime = 0;
         if (bgmBattle.src !== bgmUrl) { bgmBattle.src = bgmUrl; bgmBattle.load(); }
         bgmBattle.volume = 0.45;
         bgmBattle.play().catch(() => {
@@ -7178,7 +7818,7 @@
         logger.scrollTop = logger.scrollHeight;
     }
 
-    function renderPvpMiniParty(units, containerId, side) {
+    function renderPvpMiniParty(units, containerId, side, myUnits, oppUnits) {
         const el = document.getElementById(containerId);
         if (!el) return;
         el.innerHTML = "";
@@ -7192,7 +7832,9 @@
                 ? Math.min(100, (u._shield / u.maxHp) * 100) : 0;
             const shieldText = (u._shield && u._shield > 0)
                 ? `<div class="pvp-shield-text">🛡️${Math.floor(u._shield/1000)}k</div>` : '';
-            div.innerHTML = `<span class="pvp-mini-icon">${u.icon}</span><div class="pvp-mini-hp-bar"><div class="pvp-mini-hp-fill ${side}" style="width:${hpPer}%"></div><div class="pvp-mini-shield-bar" style="width:${shieldPer}%"></div></div>${shieldText}`;
+            const pvpSide = side === 'you' ? 'my' : 'opp';
+            const statusIconsHtml = (myUnits && oppUnits) ? getPvpStatusIcons(u, pvpSide, myUnits, oppUnits) : '';
+            div.innerHTML = `<span class="pvp-mini-icon">${u.icon}</span><div class="pvp-mini-hp-bar"><div class="pvp-mini-hp-fill ${side}" style="width:${hpPer}%"></div><div class="pvp-mini-shield-bar" style="width:${shieldPer}%"></div></div>${shieldText}${statusIconsHtml}`;
             el.appendChild(div);
         });
     }
@@ -7227,6 +7869,13 @@
                 if (!shieldTxt) { shieldTxt = document.createElement("div"); shieldTxt.className = "pvp-shield-text"; sl.appendChild(shieldTxt); }
                 shieldTxt.textContent = "🛡️" + Math.floor(u._shield/1000) + "k";
             } else if (shieldTxt) shieldTxt.remove();
+            // バフ・デバフアイコン更新
+            let siEl = sl.querySelector(".pvp-mini-status-icons");
+            const siHtml = getPvpStatusIcons(u, 'my', myUnits, oppUnits);
+            if (siHtml) {
+                if (!siEl) { sl.insertAdjacentHTML('beforeend', siHtml); }
+                else { siEl.outerHTML = siHtml; }
+            } else if (siEl) siEl.remove();
         });
         oppUnits.forEach((u, i) => {
             const sl = document.getElementById("pvp-mini-opp-" + i);
@@ -7242,6 +7891,13 @@
                 if (!shieldTxt) { shieldTxt = document.createElement("div"); shieldTxt.className = "pvp-shield-text"; sl.appendChild(shieldTxt); }
                 shieldTxt.textContent = "🛡️" + Math.floor(u._shield/1000) + "k";
             } else if (shieldTxt) shieldTxt.remove();
+            // バフ・デバフアイコン更新
+            let siElO = sl.querySelector(".pvp-mini-status-icons");
+            const siHtmlO = getPvpStatusIcons(u, 'opp', myUnits, oppUnits);
+            if (siHtmlO) {
+                if (!siElO) { sl.insertAdjacentHTML('beforeend', siHtmlO); }
+                else { siElO.outerHTML = siHtmlO; }
+            } else if (siElO) siElO.remove();
         });
     }
 
@@ -7424,7 +8080,7 @@
             allies.forEach(u => {
                 if (u && u.currentHp > 0) {
                     u._shieldCount = (u._shieldCount || 0);
-                    if (u._shieldCount < 3) {
+                    if (u._shieldCount < 2) {
                         u._shield = (u._shield || 0) + shieldAmt;
                         u._shieldCount++;
                         grantCount++;
@@ -7434,7 +8090,7 @@
             dmg = Math.floor(atk * DMG_SCALE); // シールドキャラはATKのみのダメージ（少量）
             healLog = grantCount > 0
                 ? `<span style="color:#00ccff;">🛡️ ${unit.icon}${name}の聖壁！味方全体に${shieldAmt.toLocaleString()}のシールドを付与！</span>`
-                : `<span style="color:#558;">🛡️ ${unit.icon}${name}の聖壁！全員がシールド最大スタック(3)のため追加付与できなかった！</span>`;
+                : `<span style="color:#558;">🛡️ ${unit.icon}${name}の聖壁！全員がシールド最大スタック(2)のため追加付与できなかった！</span>`;
         }
         // サタン（自分ATK強化）
         else if (name === "獄炎公サタン") {
@@ -7640,8 +8296,8 @@
         // 再戦用に初期状態を保存（deepcopy）
         pvpLastMyUnits = myUnits.map(u => u ? {...u} : null);
         pvpLastOppUnits = oppUnits.map(u => u ? {...u} : null);
-        renderPvpMiniParty(myUnits, "pvpMyMiniParty", "you");
-        renderPvpMiniParty(oppUnits, "pvpOppMiniParty", "opp");
+        renderPvpMiniParty(myUnits, "pvpMyMiniParty", "you", myUnits, oppUnits);
+        renderPvpMiniParty(oppUnits, "pvpOppMiniParty", "opp", myUnits, oppUnits);
         updatePvpHpBars(myUnits, oppUnits);
         pvpLog("<span style=\"color:#ffd700;font-weight:bold;\">⚔️ PVPバトル開始！ " + currentUser + " VS " + pvpOpponentData.player + "</span>");
         await new Promise(r => setTimeout(r, Math.floor(600 / pvpSpeedMultiplier)));
@@ -7758,9 +8414,9 @@
 
                 if (isSkill) {
                     unit._skillCount = (unit._skillCount || 0) + 1;
-                    const rarityKeyMap = { '#ff0000':'ur', '#ff00ff':'lr', '#ffd700':'ssr', '#00ffff':'sr', '#cd7f32':'r' };
-                    const rKey = rarityKeyMap[unit.rarityColor] || 'sr';
-                    showSkillOverlay(unit, unit.rarityColor || '#fff', rKey);
+                    const rarityKeyMap = { '#ff0000':'ur', '#ff00ff':'lr', '#ffd700':'ssr', '#00ffff':'sr', '#cd7f32':'r', '#ffffff':'ur' };
+                    const rKey = rarityKeyMap[unit.rarityColor] || 'ur';
+                    const _pvpSkillAutoHide = showSkillOverlay(unit, unit.rarityColor || '#fff', rKey);
                     playChargeSfx();
                     pvpLog("<span style=\"color:#ff0; font-weight:bold;\">" + unit.icon + unit.name + "の奥義：『" + unit.skill + "』発動！</span>");
                     await new Promise(r => setTimeout(r, Math.floor(600 / pvpSpeedMultiplier)));
@@ -7770,6 +8426,35 @@
                     if (healLog) pvpLog(healLog);
 
                     if (skillDmg > 0) {
+                        // 千手転輪：1撃ごとにランダムターゲット選択
+                        if (unit.spreadPierce) {
+                            // EXキャラ：通常skillOverlayを即消してEX専用演出に切り替え
+                            clearTimeout(_pvpSkillAutoHide);
+                            document.getElementById('skillOverlay').classList.remove('active');
+                            const hitCount = unit.hitCount || 5;
+                            // 釈迦：敵全員のシールドを解除
+                            const shieldBroken = oppUnits.filter(u => u && u._shield > 0);
+                            if (shieldBroken.length > 0) {
+                                shieldBroken.forEach(u => { u._shield = 0; u._shieldCount = 0; });
+                                pvpLog('<span style="color:#ffffff;font-weight:bold;">[☸ シールド解除] 千手転輪が敵全員のシールドを粉砕！</span>');
+                            }
+                            pvpLog('<span style="color:#ffffff;font-weight:bold;">[☸ 千手転輪！]</span> ' + unit.icon + unit.name + 'が千手転輪を解き放つ！ターゲットが分散する！');
+                            for (let h = 1; h <= hitCount; h++) {
+                                const aliveOppNow = oppUnits.filter(u => u.currentHp > 0);
+                                if (aliveOppNow.length === 0) break;
+                                const hitTarget = aliveOppNow[Math.floor(Math.random() * aliveOppNow.length)];
+                                const hitDmg = Math.max(1, Math.floor(skillDmg * myAtkBuff * (0.9 + Math.random() * 0.2)));
+                                hitTarget.currentHp = Math.max(0, hitTarget.currentHp - hitDmg);
+                                unit._totalDamage = (unit._totalDamage || 0) + hitDmg;
+                                _playEXHitSound(h);
+                                showEXSkillOverlay(h, hitCount);
+                                pvpLog('<span style="color:#ffffff;font-weight:bold;">[☸貫通 ' + h + 'HIT]</span> → ' + hitTarget.icon + hitTarget.name + ' <span style="color:#ffffff;font-weight:bold;">' + hitDmg.toLocaleString() + '</span> 直撃！' + (hitTarget.currentHp <= 0 ? ' <span style="color:#888;">(撃破！)</span>' : ''));
+                                updatePvpHpBars(myUnits, oppUnits);
+                                await new Promise(r => setTimeout(r, Math.floor(250 / pvpSpeedMultiplier)));
+                                await pvpWaitIfPaused();
+                            }
+                            hideEXSkillOverlay();
+                        } else {
                         // 氷の女王シヴァ：10%で敵スキップ付与は別途、ここでは通常通りダメ
                         const target = aliveOpp[Math.floor(Math.random() * aliveOpp.length)];
                         const tIdx = oppUnits.indexOf(target);
@@ -7801,6 +8486,7 @@
                                 }
                             });
                         }
+                        } // end else (non-spreadPierce)
                     }
                 } else {
                     await new Promise(r => setTimeout(r, Math.floor(280 / pvpSpeedMultiplier)));
@@ -7867,6 +8553,32 @@
                     if (healLog) pvpLog(healLog);
 
                     if (skillDmg > 0) {
+                        // 千手転輪（拡散貫通）：1撃ごとにランダムターゲット選択
+                        if (unit.spreadPierce) {
+                            const hitCount = unit.hitCount || 5;
+                            // 釈迦：プレイヤー側全員のシールドを解除
+                            const shieldBrokenMy = myUnits.filter(u => u && u._shield > 0);
+                            if (shieldBrokenMy.length > 0) {
+                                shieldBrokenMy.forEach(u => { u._shield = 0; u._shieldCount = 0; });
+                                pvpLog('<span style="color:#ff6600;font-weight:bold;">[☸ シールド解除] 敵の千手転輪が味方全員のシールドを粉砕！</span>');
+                            }
+                            pvpLog('<span style="color:#ffffff;font-weight:bold;">[☸ 千手転輪！]</span> ' + unit.icon + unit.name + 'が千手転輪を解き放つ！5連撃が自軍に降り注ぐ！');
+                            for (let h = 1; h <= hitCount; h++) {
+                                const aliveMeNow = myUnits.filter(u => u.currentHp > 0);
+                                if (aliveMeNow.length === 0) break;
+                                const hitTarget = aliveMeNow[Math.floor(Math.random() * aliveMeNow.length)];
+                                const hitDmg = Math.max(1, Math.floor(skillDmg * oppAtkBuff * (0.9 + Math.random() * 0.2)));
+                                hitTarget.currentHp = Math.max(0, hitTarget.currentHp - hitDmg);
+                                unit._totalDamage = (unit._totalDamage || 0) + hitDmg;
+                                _playEXHitSound(h);
+                                showEXSkillOverlay(h, hitCount);
+                                pvpLog('<span style="color:#ffffff;font-weight:bold;">[☸貫通 ' + h + 'HIT]</span> → ' + hitTarget.icon + hitTarget.name + ' <span style="color:#ffffff;font-weight:bold;">' + hitDmg.toLocaleString() + '</span> 直撃！' + (hitTarget.currentHp <= 0 ? ' <span style="color:#888;">(撃破！)</span>' : ''));
+                                updatePvpHpBars(myUnits, oppUnits);
+                                await new Promise(r => setTimeout(r, Math.floor(250 / pvpSpeedMultiplier)));
+                                await pvpWaitIfPaused();
+                            }
+                            hideEXSkillOverlay();
+                        } else {
                         const target = aliveMe[Math.floor(Math.random() * aliveMe.length)];
                         if (oppPierce) {
                             const pierceDmg = Math.max(1, Math.floor(skillDmg * oppAtkBuff * (0.9 + Math.random() * 0.2)));
@@ -7891,6 +8603,7 @@
                                 }
                             });
                         }
+                        } // end else (non-spreadPierce opp)
                     }
                 } else {
                     await new Promise(r => setTimeout(r, Math.floor(280 / pvpSpeedMultiplier)));
@@ -8491,7 +9204,7 @@ function buildGardenSelectorGrid() {
     const grid = document.getElementById('gardenSelectorGrid');
     grid.innerHTML = '';
     if (!userData || !userData.myBox) return;
-    const rarityColors = { UR: '#ff4444', LR: '#ff00ff', SSR: '#ffd700', SR: '#00ffff', R: '#cd7f32' };
+    const rarityColors = { UR: '#ff4444', LR: '#ff00ff', SSR: '#ffd700', SR: '#00ffff', R: '#cd7f32', EX: '#ffffff' };
 
     // 所持キャラ一覧を構築
     const ownedChars = [];
@@ -8511,8 +9224,8 @@ function buildGardenSelectorGrid() {
     }
 
     // レア順ソート
-    const rarityOrder = { LR: 0, UR: 1, SSR: 2, SR: 3, R: 4 };
-    ownedChars.sort((a, b) => (rarityOrder[a.rarity] || 99) - (rarityOrder[b.rarity] || 99));
+    const rarityOrder = { EX: 0, LR: 1, UR: 2, SSR: 3, SR: 4, R: 5 };
+    ownedChars.sort((a, b) => (rarityOrder[a.rarity] ?? 99) - (rarityOrder[b.rarity] ?? 99));
 
     const inGarden = gardenChars.filter(Boolean).map(c => c.name);
 
