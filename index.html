@@ -710,8 +710,8 @@
         100% { transform: translate(-50%,-50%) scale(1); opacity: 0; }
     }
     #hasha-content {
-        position: relative; z-index: 5; text-align: center; padding: 28px 24px;
-        opacity: 0; overflow: visible;
+        position: relative; z-index: 5; text-align: center; padding: 28px 16px;
+        opacity: 0; overflow: visible; width: 100%; box-sizing: border-box;
     }
     #hasha-content.visible {
         animation: hasha-content-in 0.9s cubic-bezier(0.1, 1.5, 0.3, 1) forwards;
@@ -729,6 +729,13 @@
         text-align: center; transition: 0.2s;
         position: relative; overflow: hidden;
         animation: hasha-card-in 0.5s cubic-bezier(0.2, 1.4, 0.2, 1) both;
+        min-width: 0;
+    }
+    @media (max-width: 420px) {
+        .hasha-card { padding: 6px 3px; border-radius: 8px; }
+        .hasha-card-icon { font-size: 24px !important; }
+        .hasha-card-name { font-size: 7px !important; }
+        .hasha-card-rarity { font-size: 7px !important; letter-spacing: 0 !important; }
     }
     .hasha-card:hover { border-color: #ff4400; transform: scale(1.08); box-shadow: 0 0 20px rgba(255,80,0,0.7); }
     .hasha-card:hover::after { content:''; position:absolute; inset:0; background:rgba(255,60,0,0.12); border-radius:10px; }
@@ -1881,7 +1888,7 @@
     <div id="hasha-content">
         <div id="hasha-label">✦ 絶対召喚 ✦</div>
         <div id="hasha-sub-title" style="font-size:12px; color:rgba(255,180,100,0.85); letter-spacing:2px; margin-bottom:18px;">LR・URの中から1体を選択して入手せよ</div>
-        <div id="hasha-select-grid" style="display:grid; grid-template-columns:repeat(5,1fr); gap:10px; margin-bottom:20px; max-width:420px; overflow:visible;"></div>
+        <div id="hasha-select-grid" style="display:grid; grid-template-columns:repeat(5,1fr); gap:6px; margin-bottom:20px; width:min(420px, calc(100vw - 32px)); overflow:visible;"></div>
         <span id="hasha-sub">— 共に歩む仲間を選べ —</span>
     </div>
 </div>
@@ -6527,8 +6534,9 @@
 
     function closeIncarnationModal() {
         document.getElementById("incarnationModal").style.display = "none";
-        // ガチャ画面に戻る（battleViewが表示されていたらガチャに戻す）
-        if (document.getElementById("battleView").style.display !== "none" && !isBattleRunning) {
+        // incarnationBattleMode が true の場合はバトルビューへ切り替える
+        // そうでない場合かつbattleViewが表示中でバトルしていなければガチャへ戻す
+        if (!incarnationBattleMode && document.getElementById("battleView").style.display !== "none" && !isBattleRunning) {
             switchToGacha();
         }
     }
@@ -6539,8 +6547,7 @@
 
     function closeIncarnationLevelModal() {
         document.getElementById("incarnationLevelModal").style.display = "none";
-        // ガチャ画面に戻る
-        switchToGacha();
+        // 難易度選択モーダルを閉じるだけ（バトル開始時はswitchToBattleViewが呼ばれるため不要）
     }
 
     function renderIncarnationDayGrid() {
@@ -6698,6 +6705,10 @@
         });
 
         document.getElementById("battleLog").innerHTML = `<span style="color:${dayData.color}; font-weight:bold;">${dayData.icon} ${dayData.label}が降臨した！</span> 難易度${level}「${getLevelName(level)}」に挑め！`;
+
+        // ガチャ画面 → バトル画面へ切り替え
+        document.getElementById('gachaView').style.display = 'none';
+        document.getElementById('battleView').style.display = 'flex';
     }
 
     // 化身フィールドエフェクト（属性ごとの背景演出）
